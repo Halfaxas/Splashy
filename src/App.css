@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/* ── Custom scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@keyframes status-bar-shrink {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+@keyframes bg-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes view-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-view-in {
+  animation: view-in 180ms ease-out both;
+}
+
+/* Staggered card entry — apply to grid items */
+.animate-card-in {
+  animation: slide-in-up 220ms ease-out both;
+}
+
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes modal-backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes modal-panel-in {
+  from { opacity: 0; transform: scale(0.96) translateY(6px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+@keyframes modal-panel-out {
+  from { opacity: 1; transform: scale(1)    translateY(0); }
+  to   { opacity: 0; transform: scale(0.96) translateY(6px); }
+}
+
+.modal-backdrop-in  { animation: modal-backdrop-in  180ms ease-out both; }
+.modal-backdrop-out { animation: modal-backdrop-out 160ms ease-in  both; }
+.modal-panel-in     { animation: modal-panel-in     200ms cubic-bezier(0.34,1.26,0.64,1) both; }
+.modal-panel-out    { animation: modal-panel-out    160ms ease-in  both; }
