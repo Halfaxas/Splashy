@@ -10,20 +10,10 @@ function onDragStart(e: React.MouseEvent) {
 export default function TitleBar() {
   return (
     <div
-      className="h-8 flex items-center shrink-0 select-none border-b border-white/5"
-      style={{ background: "#07080e" }}
+      className="h-8 flex items-center shrink-0 select-none"
+      style={{ background: "transparent" }}
     >
-      {/* App name — hidden on macOS (native title bar already shows it) */}
-      {!isMac && (
-        <span
-          onMouseDown={onDragStart}
-          className="text-[11px] font-medium text-white/25 tracking-wide cursor-default pl-4"
-        >
-          Splashy
-        </span>
-      )}
-
-      {/* Fills remaining space — draggable */}
+      {/* Draggable area */}
       <div onMouseDown={onDragStart} className="flex-1 h-full" />
 
       {/* Window controls — hidden on macOS (native traffic lights are used) */}

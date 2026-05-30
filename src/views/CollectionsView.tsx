@@ -102,7 +102,8 @@ export default function CollectionsView({ refreshKey = 0 }: { refreshKey?: numbe
   }, [collections, filter, search, sortBy, sortDir, orderMap]);
 
   return (
-    <div className="flex-1 p-6 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto">
+      <div className="p-6">
       <button
         onClick={() => openUrl("https://unsplash.com/collections")}
         className="text-lg font-semibold text-white mb-4 hover:text-white/70 transition-colors cursor-pointer block"
@@ -117,7 +118,7 @@ export default function CollectionsView({ refreshKey = 0 }: { refreshKey?: numbe
           onChange={(e) => setImportId(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleImport()}
           placeholder={t("collections.placeholder")}
-          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-white/30 transition-colors"
+          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/50 outline-none focus:border-white/30 transition-colors"
         />
         <button
           onClick={handleImport}
@@ -142,11 +143,11 @@ export default function CollectionsView({ refreshKey = 0 }: { refreshKey?: numbe
       )}
 
       {loading ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("common.loading")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("common.loading")}</div>
       ) : collections.length === 0 ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("collections.empty")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("collections.empty")}</div>
       ) : displayed.length === 0 ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("collections.noMatch")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("collections.noMatch")}</div>
       ) : (
         <div className="grid grid-cols-2 gap-4">
           {displayed.map((col, idx) => (
@@ -195,29 +196,30 @@ export default function CollectionsView({ refreshKey = 0 }: { refreshKey?: numbe
                   col.author_username ? (
                     <button
                       onClick={() => openUrl(`https://unsplash.com/@${col.author_username}`)}
-                      className="text-xs text-white/40 hover:text-white/70 transition-colors cursor-pointer"
+                      className="text-xs text-white/60 hover:text-white/80 transition-colors cursor-pointer"
                     >
                       {t("collections.by", { name: col.author_name })}
                     </button>
                   ) : (
-                    <span className="text-xs text-white/40">{t("collections.by", { name: col.author_name })}</span>
+                    <span className="text-xs text-white/60">{t("collections.by", { name: col.author_name })}</span>
                   )
                 )}
-                <span className="text-[11px] text-white/30 block">{t("collections.photos", { count: col.count })}</span>
+                <span className="text-[11px] text-white/50 block">{t("collections.photos", { count: col.count })}</span>
                 {col.description && (
-                  <p className="text-xs text-white/30 leading-relaxed mt-1 line-clamp-2">{col.description}</p>
+                  <p className="text-xs text-white/50 leading-relaxed mt-1 line-clamp-2">{col.description}</p>
                 )}
               </div>
             </div>
           ))}
         </div>
       )}
+      </div>
 
       {confirmDelete && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-[#0f1117] border border-white/10 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
             <h3 className="text-white font-semibold mb-2">{t("collections.deleteTitle")}</h3>
-            <p className="text-white/50 text-sm mb-6">
+            <p className="text-white/70 text-sm mb-6">
               {t("collections.deleteBody", { title: confirmDelete.title })}
             </p>
             <div className="flex gap-3 justify-end">

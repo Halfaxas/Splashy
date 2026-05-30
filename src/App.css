@@ -29,6 +29,10 @@
   to   { opacity: 1; }
 }
 
+.animate-bg-fade {
+  animation: bg-fade-in 1000ms ease-in-out forwards;
+}
+
 @keyframes view-in {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -57,12 +61,12 @@
   to   { opacity: 0; }
 }
 @keyframes modal-panel-in {
-  from { opacity: 0; transform: scale(0.96) translateY(6px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes modal-panel-out {
-  from { opacity: 1; transform: scale(1)    translateY(0); }
-  to   { opacity: 0; transform: scale(0.96) translateY(6px); }
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(8px); }
 }
 
 .modal-backdrop-in  { animation: modal-backdrop-in  180ms ease-out both; }
