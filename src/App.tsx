@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { convertFileSrc } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { View } from "./types";
 import Sidebar from "./components/Sidebar";
 import TitleBar from "./components/TitleBar";
@@ -16,12 +18,31 @@ import SettingsView from "./views/SettingsView";
 export default function App() {
   const [view, setView] = useState<View>("home");
   const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
+  const [wallpaperBg, setWallpaperBg] = useState<string | null>(null);
 
   useEffect(() => {
     invoke<string | null>("get_api_key")
       .then((key) => setHasApiKey(key !== null))
       .catch(() => setHasApiKey(false));
   }, []);
+
+  useEffect(() => {
+    invoke<{ path: string } | null>("get_current_wallpaper")
+      .then((info) => {
+        if (info?.path) setWallpaperBg(convertFileSrc(info.path));
+      })
+      .catch(() => {});
+
+    const unlisten = listen("wallpaper-changed", () => {
+      invoke<{ path: string } | null>("get_current_wallpaper")
+        .then((info) => {
+          if (info?.path) setWallpaperBg(convertFileSrc(info.path));
+        })
+        .catch(() => {});
+    });
+    return () => { unlisten.then((f) => f()); };
+  }, []);
+
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
@@ -59,7 +80,23 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen text-white overflow-hidden select-none" style={{ background: "#07080e" }}>
+    <div
+      className="flex flex-col h-screen text-white overflow-hidden select-none relative"
+    >
+      {/* Blurred wallpaper background */}
+      {wallpaperBg && (
+        <div
+          className="absolute inset-0 -z-10"
+          style={{
+            backgroundImage: `url(${wallpaperBg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(8px) brightness(0.5)",
+            transform: "scale(1.05)",
+          }}
+        />
+      )}
+      {!wallpaperBg && <div className="absolute inset-0 -z-10" style={{ background: "#07080e" }} />}
       {!navigator.userAgent.includes("Mac") && <TitleBar />}
 
       <div className="flex flex-1 min-h-0 overflow-hidden">

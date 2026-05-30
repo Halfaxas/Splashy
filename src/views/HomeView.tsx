@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { AdjacentWallpapers, CurrentWallpaperInfo } from "../types";
 import { IconRefresh } from "../components/icons";
 import ActiveTargetsModal from "../components/ActiveTargetsModal";
+import GlassPanel from "../components/GlassPanel";
 
 const STATUS_DURATION_MS = 10_000;
 const SAVE_STATUS_DURATION_MS = 5_000;
@@ -31,9 +32,12 @@ function AdjacentCard({
       onClick={info ? () => openUrl(info.unsplash_url) : undefined}
       title={info ? `${label} — Photo by ${info.author_name}` : label}
       disabled={!info}
-      className="flex flex-col overflow-hidden rounded-xl bg-black/30 backdrop-blur-sm border border-white/10 hover:border-white/30 transition-all cursor-pointer text-left shrink-0 disabled:cursor-default disabled:hover:border-white/10"
+      className="relative flex flex-col overflow-hidden rounded-xl transition-all cursor-pointer text-left shrink-0 disabled:cursor-default"
       style={{ width: 96 }}
     >
+      <div className="absolute inset-0 -z-10">
+        <GlassPanel cornerRadius={12} className="w-full h-full" />
+      </div>
       <div className="relative w-full h-14 overflow-hidden">
         <div className="absolute inset-0 bg-white/5 animate-pulse" />
         {info && (
@@ -219,8 +223,11 @@ export default function HomeView({ onRefresh, loading, status, isError }: HomeVi
 
       <button
         onClick={() => setShowTargetsModal(true)}
-        className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-white/10 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-sm border border-white/10 transition-all cursor-pointer"
+        className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-white/80 hover:text-white transition-all cursor-pointer overflow-hidden"
       >
+        <div className="absolute inset-0 -z-10">
+          <GlassPanel cornerRadius={12} className="w-full h-full" />
+        </div>
         {t("home.activeSources")}
       </button>
 
@@ -228,8 +235,11 @@ export default function HomeView({ onRefresh, loading, status, isError }: HomeVi
         <button
           onClick={onRefresh}
           disabled={loading}
-          className="flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold bg-white/12 hover:bg-white/18 active:scale-95 active:bg-white/8 text-white border border-white/20 backdrop-blur-md shadow-2xl shadow-black/40 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
+          className="relative flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer active:scale-95 overflow-hidden"
         >
+          <div className="absolute inset-0 -z-10">
+            <GlassPanel cornerRadius={16} className="w-full h-full" />
+          </div>
           <IconRefresh className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
           {loading ? t("home.refreshing") : t("home.refreshWallpaper")}
         </button>
