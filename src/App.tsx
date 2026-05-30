@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { View } from "./types";
 import Sidebar from "./components/Sidebar";
-import TitleBar from "./components/TitleBar";
 import ApiKeySetup from "./components/ApiKeySetup";
 import HomeView from "./views/HomeView";
 import CollectionsView from "./views/CollectionsView";
@@ -15,10 +14,42 @@ import ColorsView from "./views/ColorsView";
 import RelatedView from "./views/RelatedView";
 import SettingsView from "./views/SettingsView";
 
+function computeBrightness(url: string): Promise<number> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const size = 50;
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { resolve(0); return; }
+      ctx.drawImage(img, 0, 0, size, size);
+      const data = ctx.getImageData(0, 0, size, size).data;
+      let total = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        total += data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+      }
+      resolve(total / (size * size));
+    };
+    img.onerror = () => resolve(0);
+    img.src = url;
+  });
+}
+
 export default function App() {
   const [view, setView] = useState<View>("home");
   const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
   const [wallpaperBg, setWallpaperBg] = useState<string | null>(null);
+  const [fadingBg, setFadingBg] = useState<string | null>(null);
+  const [isLightBg, setIsLightBg] = useState(false);
+  const bgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const updateBrightness = useCallback(async (url: string) => {
+    const brightness = await computeBrightness(url);
+    setIsLightBg(brightness > 140);
+  }, []);
 
   useEffect(() => {
     invoke<string | null>("get_api_key")
@@ -29,14 +60,32 @@ export default function App() {
   useEffect(() => {
     invoke<{ path: string } | null>("get_current_wallpaper")
       .then((info) => {
-        if (info?.path) setWallpaperBg(convertFileSrc(info.path));
+        if (info?.path) {
+          const url = `${convertFileSrc(info.path)}?t=${Date.now()}`;
+          setWallpaperBg(url);
+          updateBrightness(url);
+        }
       })
       .catch(() => {});
 
     const unlisten = listen("wallpaper-changed", () => {
       invoke<{ path: string } | null>("get_current_wallpaper")
         .then((info) => {
-          if (info?.path) setWallpaperBg(convertFileSrc(info.path));
+          if (info?.path) {
+            const url = `${convertFileSrc(info.path)}?t=${Date.now()}`;
+            const img = new Image();
+            img.onload = () => {
+              setFadingBg(url);
+              updateBrightness(url);
+              if (bgTimerRef.current) clearTimeout(bgTimerRef.current);
+              bgTimerRef.current = setTimeout(() => {
+                setWallpaperBg(url);
+                setFadingBg(null);
+              }, 1000);
+            };
+            img.onerror = () => setWallpaperBg(url);
+            img.src = url;
+          }
         })
         .catch(() => {});
     });
@@ -81,7 +130,7 @@ export default function App() {
 
   return (
     <div
-      className="flex flex-col h-screen text-white overflow-hidden select-none relative"
+      className={`flex flex-col h-screen overflow-hidden select-none relative transition-colors duration-500 ${isLightBg ? "text-gray-900" : "text-white"}`}
     >
       {/* Blurred wallpaper background */}
       {wallpaperBg && (
@@ -96,13 +145,58 @@ export default function App() {
           }}
         />
       )}
-      {!wallpaperBg && <div className="absolute inset-0 -z-10" style={{ background: "#07080e" }} />}
-      {!navigator.userAgent.includes("Mac") && <TitleBar />}
+      {fadingBg && (
+        <div
+          key={fadingBg}
+          className="absolute inset-0 -z-10 animate-bg-fade"
+          style={{
+            backgroundImage: `url(${fadingBg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(8px) brightness(0.5)",
+            transform: "scale(1.05)",
+          }}
+        />
+      )}
+      {!wallpaperBg && !fadingBg && <div className="absolute inset-0 -z-10" style={{ background: "#07080e" }} />}
+
+      {/* Sidebar blur gradient overlay — heavier blur that fades into main content */}
+      {wallpaperBg && (
+        <div
+          className="absolute top-0 bottom-0 left-0 pointer-events-none"
+          style={{
+            width: "180px",
+            backgroundImage: `url(${wallpaperBg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(32px) brightness(0.4)",
+            transform: "scale(1.1)",
+            maskImage: "linear-gradient(to right, black 40%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, black 40%, transparent 100%)",
+          }}
+        />
+      )}
+      {fadingBg && (
+        <div
+          key={`sidebar-fade-${fadingBg}`}
+          className="absolute top-0 bottom-0 left-0 pointer-events-none animate-bg-fade"
+          style={{
+            width: "180px",
+            backgroundImage: `url(${fadingBg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(32px) brightness(0.4)",
+            transform: "scale(1.1)",
+            maskImage: "linear-gradient(to right, black 40%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to right, black 40%, transparent 100%)",
+          }}
+        />
+      )}
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <Sidebar view={view} onNavigate={navigate} />
 
-        <div key={view} className="flex-1 flex flex-col min-w-0 animate-view-in">
+        <div key={view} className="flex-1 flex flex-col min-w-0">
           {view === "home" && (
             <HomeView onRefresh={handleRefresh} loading={loading} status={status} isError={isError} />
           )}

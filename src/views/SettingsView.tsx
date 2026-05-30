@@ -7,7 +7,6 @@ import { AppSettings } from "../types";
 import { LANGUAGES } from "../i18n";
 import CronScheduler from "../components/CronScheduler";
 import Toggle from "../components/Toggle";
-import GlassPanel from "../components/GlassPanel";
 
 const BMC_URL = "https://buymeacoffee.com/halfaxa";
 
@@ -169,11 +168,8 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
   }
 
   return (
-    <div className="flex-1 overflow-y-auto relative">
-      <div className="absolute inset-0 z-0 m-3">
-        <GlassPanel className="w-full h-full" />
-      </div>
-      <div className="relative z-10 p-6">
+    <div className="flex-1 overflow-y-auto">
+      <div className="p-6">
       <div className="max-w-lg mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold text-white">{t("settings.title")}</h2>

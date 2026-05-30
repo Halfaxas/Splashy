@@ -69,11 +69,6 @@ export default function HomeView({ onRefresh, loading, status, isError }: HomeVi
   const [cacheKey, setCacheKey] = useState(() => Date.now());
   const [isNextLoading, setIsNextLoading] = useState(false);
 
-  const [bgSrc, setBgSrc] = useState<string | null>(null);
-  const [fadingInSrc, setFadingInSrc] = useState<string | null>(null);
-  const bgSrcRef = useRef<string | null>(null);
-  const bgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
   const [saveStatusVisible, setSaveStatusVisible] = useState(false);
@@ -118,25 +113,6 @@ export default function HomeView({ onRefresh, loading, status, isError }: HomeVi
     relatedStatusTimerRef.current = setTimeout(() => setRelatedStatusVisible(false), SAVE_STATUS_DURATION_MS);
     return () => { if (relatedStatusTimerRef.current) clearTimeout(relatedStatusTimerRef.current); };
   }, [relatedStatus]);
-
-  const imgSrc = wallpaper ? `${convertFileSrc(wallpaper.path)}?t=${cacheKey}` : null;
-
-  useEffect(() => {
-    if (!imgSrc) return;
-    if (!bgSrcRef.current) {
-      bgSrcRef.current = imgSrc;
-      setBgSrc(imgSrc);
-      return;
-    }
-    setFadingInSrc(imgSrc);
-    if (bgTimerRef.current) clearTimeout(bgTimerRef.current);
-    bgTimerRef.current = setTimeout(() => {
-      bgSrcRef.current = imgSrc;
-      setBgSrc(imgSrc);
-      setFadingInSrc(null);
-    }, BG_TRANSITION_MS + 100);
-    return () => { if (bgTimerRef.current) clearTimeout(bgTimerRef.current); };
-  }, [imgSrc]);
 
   const loadWallpaper = useCallback(async () => {
     try {
@@ -207,19 +183,6 @@ export default function HomeView({ onRefresh, loading, status, isError }: HomeVi
 
   return (
     <div className="flex-1 relative overflow-hidden">
-      {bgSrc && (
-        <img src={bgSrc} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" style={{ filter: "blur(16px)" }} />
-      )}
-      {fadingInSrc && (
-        <img
-          key={fadingInSrc}
-          src={fadingInSrc}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover scale-110"
-          style={{ filter: "blur(16px)", animation: `bg-fade-in ${BG_TRANSITION_MS}ms ease-in-out forwards` }}
-        />
-      )}
-      <div className="absolute inset-0 bg-slate-900/70" />
 
       <button
         onClick={() => setShowTargetsModal(true)}
