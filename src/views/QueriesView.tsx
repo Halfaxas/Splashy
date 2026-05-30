@@ -103,7 +103,7 @@ export default function QueriesView({ refreshKey = 0 }: { refreshKey?: number })
     <div className="flex-1 overflow-y-auto">
       <div className="p-6">
       <h2 className="text-lg font-semibold text-white mb-1">{t("queries.title")}</h2>
-      <p className="text-sm text-white/40 mb-4">{t("queries.desc")}</p>
+      <p className="text-sm text-white/60 mb-4">{t("queries.desc")}</p>
 
       <div className="flex gap-2 mb-6">
         <input
@@ -113,7 +113,7 @@ export default function QueriesView({ refreshKey = 0 }: { refreshKey?: number })
           onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           placeholder={t("queries.placeholder")}
           maxLength={64}
-          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-white/30 transition-colors"
+          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/50 outline-none focus:border-white/30 transition-colors"
         />
         <button
           onClick={handleAdd}
@@ -138,11 +138,11 @@ export default function QueriesView({ refreshKey = 0 }: { refreshKey?: number })
       )}
 
       {loading ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("common.loading")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("common.loading")}</div>
       ) : queries.length === 0 ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("queries.empty")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("queries.empty")}</div>
       ) : displayed.length === 0 ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("queries.noMatch")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("queries.noMatch")}</div>
       ) : (
         <div className="flex flex-col gap-2">
           {displayed.map((q, idx) => (
@@ -156,7 +156,7 @@ export default function QueriesView({ refreshKey = 0 }: { refreshKey?: number })
               }`}
               style={{ animationDelay: `${idx * 20}ms` }}
             >
-              <IconSearch className="w-4 h-4 text-white/30 shrink-0 pointer-events-none" />
+              <IconSearch className="w-4 h-4 text-white/50 shrink-0 pointer-events-none" />
               <button
                 onClick={(e) => { e.stopPropagation(); openUrl(`https://unsplash.com/s/photos/${encodeURIComponent(q.value)}`); }}
                 className="min-w-0 shrink text-sm text-white font-medium truncate text-left hover:text-white/70 transition-colors cursor-pointer"
@@ -183,7 +183,7 @@ export default function QueriesView({ refreshKey = 0 }: { refreshKey?: number })
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-[#0f1117] border border-white/10 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
             <h3 className="text-white font-semibold mb-2">{t("queries.deleteTitle")}</h3>
-            <p className="text-white/50 text-sm mb-6">
+            <p className="text-white/70 text-sm mb-6">
               {t("queries.deleteBody", { value: confirmDelete.value })}
             </p>
             <div className="flex gap-3 justify-end">

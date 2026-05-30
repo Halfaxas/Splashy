@@ -99,7 +99,7 @@ export default function RelatedView({ refreshKey = 0 }: { refreshKey?: number })
     <div className="flex-1 overflow-y-auto">
       <div className="p-6">
       <h2 className="text-lg font-semibold text-white mb-1">{t("related.title")}</h2>
-      <p className="text-sm text-white/40 mb-4">{t("related.desc")}</p>
+      <p className="text-sm text-white/60 mb-4">{t("related.desc")}</p>
 
       <div className="flex gap-2 mb-6">
         <input
@@ -108,7 +108,7 @@ export default function RelatedView({ refreshKey = 0 }: { refreshKey?: number })
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAdd()}
           placeholder={t("related.placeholder")}
-          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-white/30 transition-colors"
+          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/50 outline-none focus:border-white/30 transition-colors"
         />
         <button
           onClick={handleAdd}
@@ -133,9 +133,9 @@ export default function RelatedView({ refreshKey = 0 }: { refreshKey?: number })
       )}
 
       {loading ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("common.loading")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("common.loading")}</div>
       ) : sources.length === 0 ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("related.empty")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("related.empty")}</div>
       ) : displayed.length === 0 ? (
         <div className="text-white/30 text-sm text-center py-12">{t("related.noMatch")}</div>
       ) : (
@@ -159,7 +159,7 @@ export default function RelatedView({ refreshKey = 0 }: { refreshKey?: number })
                 />
               ) : (
                 <div className="w-16 h-16 bg-white/6 shrink-0 flex items-center justify-center pointer-events-none">
-                  <span className="text-white/30 text-xs">{t("common.noImg")}</span>
+                  <span className="text-white/50 text-xs">{t("common.noImg")}</span>
                 </div>
               )}
 
@@ -170,7 +170,7 @@ export default function RelatedView({ refreshKey = 0 }: { refreshKey?: number })
                 >
                   {t("related.by", { name: s.author_name })}
                 </button>
-                <span className="text-xs text-white/30 pointer-events-none">@{s.author_username}</span>
+                <span className="text-xs text-white/50 pointer-events-none">@{s.author_username}</span>
               </div>
 
               <div className="flex items-center gap-2 pr-4 shrink-0">
@@ -195,7 +195,7 @@ export default function RelatedView({ refreshKey = 0 }: { refreshKey?: number })
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-[#0f1117] border border-white/10 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
             <h3 className="text-white font-semibold mb-2">{t("related.deleteTitle")}</h3>
-            <p className="text-white/50 text-sm mb-6">
+            <p className="text-white/70 text-sm mb-6">
               {t("related.deleteBody", { name: confirmDelete.author_name })}
             </p>
             <div className="flex gap-3 justify-end">

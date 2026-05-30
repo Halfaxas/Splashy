@@ -43,7 +43,7 @@ const ALL_MINUTES = Array.from({ length: 60 }, (_, i) => i);
 
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] font-semibold uppercase tracking-widest text-white/30 mb-3">
+    <p className="text-[11px] font-semibold uppercase tracking-widest text-white/50 mb-3">
       {children}
     </p>
   );
@@ -164,7 +164,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
   const handleDailyMinute = (m: number) => handleCronChange(`${m} ${dailyHour} * * *`);
 
   if (loading) {
-    return <div className="flex-1 flex items-center justify-center text-white/30 text-sm">{t("common.loading")}</div>;
+    return <div className="flex-1 flex items-center justify-center text-white/50 text-sm">{t("common.loading")}</div>;
   }
 
   return (
@@ -198,11 +198,11 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
                     className={`flex flex-col items-center gap-1 py-3 px-2 rounded-xl border text-center cursor-pointer transition-all ${
                       orientation === opt.value
                         ? "border-white/25 bg-white/10 text-white"
-                        : "border-white/8 bg-white/4 text-white/40 hover:border-white/18 hover:text-white"
+                        : "border-white/8 bg-white/4 text-white/60 hover:border-white/18 hover:text-white"
                     }`}
                   >
                     <span className="text-sm font-medium">{opt.label}</span>
-                    <span className="text-[11px] text-white/30">{opt.description}</span>
+                    <span className="text-[11px] text-white/50">{opt.description}</span>
                   </button>
                 ))}
               </div>
@@ -222,14 +222,14 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
                     className={`py-2 px-1 rounded-lg border text-xs font-medium cursor-pointer transition-all ${
                       quality === opt.value
                         ? "border-white/25 bg-white/10 text-white"
-                        : "border-white/8 bg-white/4 text-white/40 hover:border-white/18 hover:text-white"
+                        : "border-white/8 bg-white/4 text-white/60 hover:border-white/18 hover:text-white"
                     }`}
                   >
                     {opt.label}
                   </button>
                 ))}
               </div>
-              <p className="text-[11px] text-white/30 mt-2">
+              <p className="text-[11px] text-white/50 mt-2">
                 {QUALITY_OPTIONS.find(o => o.value === quality)?.description}
               </p>
             </div>
@@ -248,7 +248,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
                   className={`px-3 py-1 text-xs font-medium capitalize transition-colors cursor-pointer ${
                     scheduleTab === tab
                       ? "bg-white/15 text-white"
-                      : "bg-white/4 text-white/40 hover:text-white"
+                      : "bg-white/4 text-white/60 hover:text-white"
                   }`}
                 >
                   {tab === "basic" ? t("settings.scheduleBasic") : t("settings.scheduleAdvanced")}
@@ -272,7 +272,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
                   <span className={`text-sm font-medium ${cron === opt.cron ? "text-white" : "text-white/70"}`}>
                     {opt.label}
                   </span>
-                  {opt.desc && <span className="text-xs text-white/30 ml-2 shrink-0">{opt.desc}</span>}
+                  {opt.desc && <span className="text-xs text-white/50 ml-2 shrink-0">{opt.desc}</span>}
                 </button>
               ))}
 
@@ -290,7 +290,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
                     {t("settings.scheduleOnceADay")}
                   </span>
                   {isOnceDailySelected && (
-                    <span className="text-xs text-white/40 ml-2 shrink-0 font-mono">
+                    <span className="text-xs text-white/60 ml-2 shrink-0 font-mono">
                       {hourLabel12(dailyHour)}:{String(dailyMinute).padStart(2, "0")}
                     </span>
                   )}
@@ -300,7 +300,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
                   <div className="border border-white/25 border-t-0 rounded-xl rounded-t-none bg-white/4 px-3 pt-3 pb-3 flex flex-col gap-3">
                     {/* Hours grid: AM top row, PM bottom row */}
                     <div>
-                      <p className="text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Hour</p>
+                      <p className="text-[10px] text-white/50 uppercase tracking-widest mb-1.5">Hour</p>
                       <div className="grid grid-cols-12 gap-1">
                         {ALL_HOURS.map(h => (
                           <button
@@ -309,7 +309,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
                             className={`py-1 rounded text-[10px] font-medium cursor-pointer transition-colors border ${
                               h === dailyHour
                                 ? "bg-white/20 border-white/30 text-white"
-                                : "bg-white/4 border-white/8 text-white/40 hover:border-white/20 hover:text-white"
+                                : "bg-white/4 border-white/8 text-white/60 hover:border-white/20 hover:text-white"
                             }`}
                           >
                             {hourLabel12(h)}
@@ -320,7 +320,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
 
                     {/* Minutes */}
                     <div>
-                      <p className="text-[10px] text-white/30 uppercase tracking-widest mb-1.5">Minute</p>
+                      <p className="text-[10px] text-white/50 uppercase tracking-widest mb-1.5">Minute</p>
                       <div className="grid grid-cols-12 gap-1">
                         {ALL_MINUTES.map(m => (
                           <button
@@ -329,7 +329,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
                             className={`py-1 rounded text-[10px] font-medium cursor-pointer transition-colors border ${
                               m === dailyMinute
                                 ? "bg-white/20 border-white/30 text-white"
-                                : "bg-white/4 border-white/8 text-white/40 hover:border-white/20 hover:text-white"
+                                : "bg-white/4 border-white/8 text-white/60 hover:border-white/20 hover:text-white"
                             }`}
                           >
                             :{String(m).padStart(2, "0")}
@@ -359,7 +359,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
             <div className="flex items-center justify-between px-4 py-3.5">
               <div>
                 <p className="text-sm font-medium text-white">{t(`settings.${getOSStartLabel()}`)}</p>
-                <p className="text-xs text-white/40 mt-0.5">{t("settings.startWithWindowsDesc")}</p>
+                <p className="text-xs text-white/60 mt-0.5">{t("settings.startWithWindowsDesc")}</p>
               </div>
               <Toggle enabled={startOnLogin} onChange={handleStartOnLoginToggle} />
             </div>
@@ -378,7 +378,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
                   className={`px-4 py-2 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                     i18n.language === lang.code
                       ? "border-white/25 bg-white/10 text-white"
-                      : "border-white/8 bg-white/4 text-white/40 hover:border-white/18 hover:text-white"
+                      : "border-white/8 bg-white/4 text-white/60 hover:border-white/18 hover:text-white"
                   }`}
                 >
                   {lang.label}
@@ -392,14 +392,14 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
         <section>
           <SectionHeader>{t("settings.sectionApiKey")}</SectionHeader>
           <div className="flex flex-col gap-2 bg-white/4 rounded-2xl border border-white/8 p-4">
-            <p className="text-xs text-white/40">{t("settings.apiKeyDesc")}</p>
+            <p className="text-xs text-white/60">{t("settings.apiKeyDesc")}</p>
             <input
               type="text"
               value={apiKey}
               onChange={(e) => { setApiKey(e.target.value); setApiKeyError(null); }}
               onKeyDown={(e) => e.key === "Enter" && apiKey.trim() !== apiKeyLoaded && handleSaveApiKey()}
               placeholder={t("settings.apiKeyPlaceholder")}
-              className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-white/30 transition-colors font-mono"
+              className="w-full bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/50 outline-none focus:border-white/30 transition-colors font-mono"
             />
             {apiKeyError && (
               <p className="text-xs text-red-400">{apiKeyError}</p>

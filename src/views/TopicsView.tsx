@@ -79,11 +79,11 @@ export default function TopicsView({ refreshKey = 0 }: { refreshKey?: number }) 
       )}
 
       {loading ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("common.loading")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("common.loading")}</div>
       ) : topics.length === 0 ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("topics.empty")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("topics.empty")}</div>
       ) : displayed.length === 0 ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("topics.noMatch")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("topics.noMatch")}</div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
           {displayed.map((topic, idx) => (
@@ -110,7 +110,7 @@ export default function TopicsView({ refreshKey = 0 }: { refreshKey?: number }) 
                   >
                     {topic.title}
                   </button>
-                  <span className="text-xs text-white/30 pointer-events-none">{topic.total_photos.toLocaleString()} {t("topics.sortPhotos").toLowerCase()}</span>
+                  <span className="text-xs text-white/50 pointer-events-none">{topic.total_photos.toLocaleString()} {t("topics.sortPhotos").toLowerCase()}</span>
                 </div>
                 <span className="pointer-events-none">
                   <Toggle enabled={topic.enabled} onChange={() => {}} />
