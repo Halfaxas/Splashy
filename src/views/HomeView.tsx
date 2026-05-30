@@ -208,7 +208,7 @@ export default function HomeView({ onRefresh, loading, status, isError }: HomeVi
         </button>
 
         {statusVisible && status && (
-          <div className={`relative max-w-sm w-full text-center text-sm px-4 py-3 rounded-xl overflow-hidden ${
+          <div className={`absolute top-[calc(50%+3rem)] max-w-sm w-full text-center text-sm px-4 py-3 rounded-xl overflow-hidden ${
             isError ? "bg-red-900/40 text-red-300" : "bg-emerald-900/40 text-emerald-300"
           }`}>
             {status}

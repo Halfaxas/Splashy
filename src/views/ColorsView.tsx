@@ -51,14 +51,14 @@ export default function ColorsView({ refreshKey = 0 }: { refreshKey?: number }) 
     <div className="flex-1 overflow-y-auto">
       <div className="p-6">
       <h2 className="text-lg font-semibold text-white mb-1">{t("colors.title")}</h2>
-      <p className="text-sm text-white/40 mb-6">{t("colors.desc")}</p>
+      <p className="text-sm text-white/60 mb-6">{t("colors.desc")}</p>
 
       {error && (
         <div className="mb-4 text-sm px-3 py-2 rounded-lg bg-red-900/30 text-red-300">{error}</div>
       )}
 
       {loading ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("common.loading")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("common.loading")}</div>
       ) : (
         <div className="grid grid-cols-5 gap-3">
           {colors.map(({ color, enabled }, idx) => {
