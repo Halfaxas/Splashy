@@ -172,14 +172,21 @@ function GroupsModal({ target, timeGroups, onClose, onToggleGroup }: GroupsModal
 
   return (
     <div
-      className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-60 flex items-center justify-center p-4 ${
+      className={`fixed inset-0 bg-black/40 backdrop-blur-md z-60 flex items-center justify-center p-6 ${
         closing ? "modal-backdrop-out" : "modal-backdrop-in"
       }`}
       onClick={(e) => { if (e.target === e.currentTarget) close(); }}
     >
-      <div className={`w-full max-w-xs bg-[#0f1420] border border-white/10 rounded-2xl shadow-2xl ${
-        closing ? "modal-panel-out" : "modal-panel-in"
+      <div className={`w-full max-w-xs transition-opacity duration-200 ${
+        closing ? "opacity-0" : "opacity-100"
       }`}>
+        <div className="relative rounded-3xl overflow-hidden border border-white/[0.12] shadow-2xl shadow-black/40">
+          {/* Emulated liquid glass */}
+          <div className="absolute inset-0 z-0 pointer-events-none backdrop-blur-2xl bg-white/[0.04]" />
+          <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-br from-white/[0.08] via-transparent to-white/[0.03]" />
+          <div className="absolute inset-0 z-0 pointer-events-none bg-black/35" />
+
+          <div className="relative z-[2]">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/8">
           <div className="flex items-center gap-2.5">
@@ -232,6 +239,8 @@ function GroupsModal({ target, timeGroups, onClose, onToggleGroup }: GroupsModal
               </button>
             );
           })}
+        </div>
+          </div>
         </div>
       </div>
     </div>
@@ -379,55 +388,71 @@ export default function ActiveTargetsModal({ onClose }: Props) {
   return (
     <>
       <div
-        className={`fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 ${
+        className={`fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-6 ${
           closing ? "modal-backdrop-out" : "modal-backdrop-in"
         }`}
         onClick={(e) => { if (e.target === e.currentTarget) close(); }}
       >
-        <div className={`w-full max-w-sm bg-[#0f1420] border border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[80vh] ${
-          closing ? "modal-panel-out" : "modal-panel-in"
+        <div className={`w-full max-w-md transition-opacity duration-200 ${
+          closing ? "opacity-0" : "opacity-100"
         }`}>
+          <div className="relative max-h-[80vh] flex flex-col rounded-3xl overflow-hidden border border-white/[0.12] shadow-2xl shadow-black/40">
+            {/* Emulated liquid glass — backdrop blur + layered gradients */}
+            <div className="absolute inset-0 z-0 pointer-events-none backdrop-blur-2xl bg-white/[0.04]" />
+            <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-br from-white/[0.08] via-transparent to-white/[0.03]" />
+            <div className="absolute inset-0 z-0 pointer-events-none bg-black/35" />
+
+          {/* Content wrapper — above glass layers */}
+          <div className="relative z-[2] flex flex-col flex-1 min-h-0">
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-white/8 shrink-0">
-            <div>
-              <h2 className="text-sm font-semibold text-white">{t("activeTargets.title")}</h2>
-              {!loading && (
-                <p className="text-xs text-slate-500 mt-0.5">
-                  {targets.length === 0
-                    ? t("activeTargets.noneActive")
-                    : t("activeTargets.countActive", { count: targets.length })}
-                </p>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              {targets.length > 0 && (
+          <div className="shrink-0 px-6 pt-5 pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-semibold text-white tracking-tight">{t("activeTargets.title")}</h2>
+                {!loading && (
+                  <p className="text-xs text-white/35 mt-1">
+                    {targets.length === 0
+                      ? t("activeTargets.noneActive")
+                      : t("activeTargets.countActive", { count: targets.length })}
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {targets.length > 0 && (
+                  <button
+                    onClick={handleDisableAll}
+                    disabled={disablingAll}
+                    className="text-[11px] font-medium px-3 py-1.5 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/15 hover:border-red-500/30 transition-all cursor-pointer disabled:opacity-50 backdrop-blur-sm"
+                  >
+                    {t("activeTargets.disableAll")}
+                  </button>
+                )}
                 <button
-                  onClick={handleDisableAll}
-                  disabled={disablingAll}
-                  className="text-xs px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-400 hover:text-red-300 border border-red-500/20 transition-all cursor-pointer disabled:opacity-50"
+                  onClick={close}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all cursor-pointer border border-white/8"
                 >
-                  {t("activeTargets.disableAll")}
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <line x1="1" y1="1" x2="9" y2="9" />
+                    <line x1="9" y1="1" x2="1" y2="9" />
+                  </svg>
                 </button>
-              )}
-              <button
-                onClick={close}
-                className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer text-lg leading-none"
-              >
-                ×
-              </button>
+              </div>
             </div>
           </div>
 
+          {/* Separator */}
+          <div className="shrink-0 mx-5 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
           {/* Body */}
-          <div className="overflow-y-auto flex-1 p-3">
+          <div className="overflow-y-auto flex-1 px-4 py-4">
             {loading ? (
-              <div className="text-slate-500 text-sm text-center py-8">{t("common.loading")}</div>
+              <div className="text-white/30 text-sm text-center py-12">{t("common.loading")}</div>
             ) : targets.length === 0 ? (
-              <div className="text-slate-500 text-sm text-center py-8">
+              <div className="text-white/30 text-sm text-center py-12">
                 {t("activeTargets.emptyBody")}
               </div>
             ) : (
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 {targets.map((target) => {
                   const meta = KIND_META[target.kind];
                   const Icon = meta.Icon;
@@ -435,16 +460,16 @@ export default function ActiveTargetsModal({ onClose }: Props) {
                   return (
                     <div
                       key={`${target.kind}:${target.id}`}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/4 hover:bg-white/5 border border-white/5 transition-colors"
+                      className="group flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.1] transition-all"
                     >
-                      <div className={`flex items-center gap-1.5 shrink-0 px-2 py-0.5 rounded-md text-[10px] font-medium ${meta.color}`}>
+                      <div className={`flex items-center gap-1.5 shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wide ${meta.color}`}>
                         <Icon className="w-3 h-3" />
                         {meta.label}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-sm text-white font-medium truncate block">{target.label}</span>
+                        <span className="text-[13px] text-white/90 font-medium truncate block">{target.label}</span>
                         {target.sublabel && (
-                          <span className="text-xs text-slate-500 truncate block">{target.sublabel}</span>
+                          <span className="text-[11px] text-white/30 truncate block mt-0.5">{target.sublabel}</span>
                         )}
                       </div>
 
@@ -452,10 +477,10 @@ export default function ActiveTargetsModal({ onClose }: Props) {
                       <button
                         onClick={() => setGroupTarget(target)}
                         title={t("activeTargets.groupsTitle")}
-                        className="relative w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/8 transition-all cursor-pointer shrink-0"
+                        className="relative w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/8 transition-all cursor-pointer shrink-0"
                       >
                         <QuadrantRing timeGroups={timeGroups} targetId={target.targetId} />
-                        <IconClock className="relative z-10 w-3 h-3 text-white/40" />
+                        <IconClock className="relative z-10 w-3.5 h-3.5 text-white/35" />
                       </button>
 
                       <Toggle enabled={true} onChange={() => handleToggle(target)} />
@@ -464,6 +489,8 @@ export default function ActiveTargetsModal({ onClose }: Props) {
                 })}
               </div>
             )}
+          </div>
+          </div>
           </div>
         </div>
       </div>

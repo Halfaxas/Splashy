@@ -102,7 +102,8 @@ export default function UsersView({ refreshKey = 0 }: { refreshKey?: number }) {
   }, [users, filter, search, sortBy, sortDir, orderMap]);
 
   return (
-    <div className="flex-1 p-6 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto">
+      <div className="p-6">
       <h2 className="text-lg font-semibold text-white mb-4">{t("users.title")}</h2>
 
       <div className="flex gap-2 mb-4">
@@ -112,7 +113,7 @@ export default function UsersView({ refreshKey = 0 }: { refreshKey?: number }) {
           onChange={(e) => setUsername(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleFollow()}
           placeholder={t("users.placeholder")}
-          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-white/30 transition-colors"
+          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/50 outline-none focus:border-white/30 transition-colors"
         />
         <button
           onClick={handleFollow}
@@ -137,11 +138,11 @@ export default function UsersView({ refreshKey = 0 }: { refreshKey?: number }) {
       )}
 
       {loading ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("common.loading")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("common.loading")}</div>
       ) : users.length === 0 ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("users.empty")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("users.empty")}</div>
       ) : displayed.length === 0 ? (
-        <div className="text-white/30 text-sm text-center py-12">{t("users.noMatch")}</div>
+        <div className="text-white/50 text-sm text-center py-12">{t("users.noMatch")}</div>
       ) : (
         <div className="flex flex-col gap-3">
           {displayed.map((user, idx) => (
@@ -168,12 +169,12 @@ export default function UsersView({ refreshKey = 0 }: { refreshKey?: number }) {
                 >
                   {user.name}
                 </button>
-                <p className="text-xs text-white/30">@{user.username}</p>
-                {user.bio && <p className="text-xs text-white/40 mt-1 truncate">{user.bio}</p>}
+                <p className="text-xs text-white/50">@{user.username}</p>
+                {user.bio && <p className="text-xs text-white/50 mt-1 truncate">{user.bio}</p>}
               </div>
 
               <div className="flex items-center gap-3 shrink-0" onClick={(e) => e.stopPropagation()}>
-                <span className="text-xs text-white/30">{t("users.photos", { count: user.total_photos })}</span>
+                <span className="text-xs text-white/50">{t("users.photos", { count: user.total_photos })}</span>
                 <button
                   onClick={() => setConfirmDelete(user)}
                   className="p-1 rounded-md text-white/30 hover:text-red-400 hover:bg-red-400/10 transition-colors cursor-pointer"
@@ -192,7 +193,7 @@ export default function UsersView({ refreshKey = 0 }: { refreshKey?: number }) {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
           <div className="bg-[#0f1117] border border-white/10 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
             <h3 className="text-white font-semibold mb-2">{t("users.unfollowTitle")}</h3>
-            <p className="text-white/50 text-sm mb-6">
+            <p className="text-white/70 text-sm mb-6">
               {t("users.unfollowBody", { name: confirmDelete.name, username: confirmDelete.username })}
             </p>
             <div className="flex gap-3 justify-end">
@@ -212,6 +213,7 @@ export default function UsersView({ refreshKey = 0 }: { refreshKey?: number }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

@@ -11,10 +11,12 @@ interface SidebarProps {
 export default function Sidebar({ view, onNavigate }: SidebarProps) {
   const { t } = useTranslation();
   return (
-    <aside className="w-20 flex flex-col items-center pt-3 pb-4 border-r border-white/5 shrink-0"
-      style={{ background: "linear-gradient(180deg, #07090f 0%, #0d1017 100%)" }}
-    >
-      <div className="flex flex-col items-center gap-1 flex-1 w-full overflow-y-auto min-h-0">
+    <aside className="w-20 flex flex-col items-center pt-3 pb-4 shrink-0 relative mac:pt-10">
+
+      {/* Reserve space for macOS traffic lights */}
+      {navigator.userAgent.includes("Mac") && <div className="shrink-0 h-7" />}
+
+      <div className="relative z-10 flex flex-col items-center gap-1 flex-1 w-full overflow-y-auto min-h-0">
         <SidebarButton
           label={t("nav.home")}
           icon={<IconHome className="w-5 h-5" />}
@@ -59,12 +61,14 @@ export default function Sidebar({ view, onNavigate }: SidebarProps) {
         />
       </div>
 
-      <SidebarButton
-        label={t("nav.settings")}
-        icon={<IconSettings className="w-5 h-5" />}
-        active={view === "settings"}
-        onClick={() => onNavigate("settings")}
-      />
+      <div className="relative z-10 w-full flex flex-col items-center">
+        <SidebarButton
+          label={t("nav.settings")}
+          icon={<IconSettings className="w-5 h-5" />}
+          active={view === "settings"}
+          onClick={() => onNavigate("settings")}
+        />
+      </div>
     </aside>
   );
 }

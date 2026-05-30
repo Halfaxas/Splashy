@@ -62,7 +62,7 @@ function SortDropdown({ value, options, onChange }: {
               className={`w-full text-left px-3 py-2 text-xs transition-colors cursor-pointer ${
                 opt.value === value
                   ? "bg-white/12 text-white"
-                  : "text-white/60 hover:bg-white/8 hover:text-white"
+                  : "text-white/70 hover:bg-white/8 hover:text-white"
               }`}
             >
               {opt.label}
@@ -98,7 +98,7 @@ export default function FilterBar({
           value={search}
           onChange={(e) => onSearch(e.target.value)}
           placeholder={searchPlaceholder ?? t("filterBar.all")}
-          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white placeholder-white/30 outline-none focus:border-white/30 transition-colors"
+          className="flex-1 bg-white/6 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white placeholder-white/50 outline-none focus:border-white/30 transition-colors"
         />
         <div className="flex rounded-lg overflow-hidden border border-white/10 shrink-0">
           {FILTER_OPTIONS.map((opt) => (
@@ -108,7 +108,7 @@ export default function FilterBar({
               className={`px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                 filter === opt.value
                   ? "bg-white/15 text-white"
-                  : "text-white/40 hover:text-white hover:bg-white/8"
+                : "text-white/60 hover:text-white hover:bg-white/8"
               }`}
             >
               {opt.label}
@@ -117,12 +117,12 @@ export default function FilterBar({
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-xs text-white/30">{t("filterBar.sortBy")}</span>
+        <span className="text-xs text-white/60">{t("filterBar.sortBy")}</span>
         <SortDropdown value={sortBy} options={sortOptions} onChange={onSortBy} />
         <button
           onClick={() => onSortDir(sortDir === "asc" ? "desc" : "asc")}
           title={sortDir === "asc" ? "Ascending" : "Descending"}
-          className="w-7 h-7 flex items-center justify-center rounded-lg border border-white/10 bg-white/6 text-white/50 hover:text-white hover:border-white/20 transition-colors cursor-pointer text-sm"
+          className="w-7 h-7 flex items-center justify-center rounded-lg border border-white/10 bg-white/6 text-white/70 hover:text-white hover:border-white/20 transition-colors cursor-pointer text-sm"
         >
           {sortDir === "asc" ? "↑" : "↓"}
         </button>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { useTranslation } from "react-i18next";
+import GlassPanel from "./GlassPanel";
 
 interface Props {
   onKeySet: () => void;
@@ -30,7 +31,8 @@ export default function ApiKeySetup({ onKeySet }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "#07080e" }}>
-      <div className="w-full max-w-sm px-6">
+      <GlassPanel className="w-full max-w-sm mx-6">
+        <div className="px-6 py-8">
         <div className="mb-8 text-center">
           <div className="text-4xl mb-4">🔑</div>
           <h1 className="text-xl font-semibold text-white mb-2">{t("apiSetup.title")}</h1>
@@ -67,7 +69,8 @@ export default function ApiKeySetup({ onKeySet }: Props) {
             {t("apiSetup.getKey")}
           </button>
         </div>
-      </div>
+        </div>
+      </GlassPanel>
     </div>
   );
 }
