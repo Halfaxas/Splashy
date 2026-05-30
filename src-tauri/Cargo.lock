@@ -2622,7 +2622,7 @@ dependencies = [
 
 [[package]]
 name = "my-wallpaper-app"
-version = "0.1.0"
+version = "0.1.5"
 dependencies = [
  "chrono",
  "cron",
@@ -4790,6 +4790,7 @@ dependencies = [
  "heck 0.5.0",
  "http",
  "http-range",
+ "image",
  "jni",
  "libc",
  "log",
