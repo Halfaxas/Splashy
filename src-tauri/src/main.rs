@@ -29,11 +29,10 @@ fn main() {
             Some(vec!["--hidden"]),
         ))
         .setup(|app| {
-            // On macOS, use native traffic-light buttons via overlay title bar
-            #[cfg(target_os = "macos")]
+            // On Windows, disable decorations (custom TitleBar component handles it)
+            #[cfg(target_os = "windows")]
             if let Some(w) = app.get_webview_window("main") {
-                let _ = w.set_decorations(true);
-                let _ = w.set_title_bar_style(tauri::TitleBarStyle::Overlay);
+                let _ = w.set_decorations(false);
             }
 
             // Show window on normal launch; skip if auto-started with --hidden
