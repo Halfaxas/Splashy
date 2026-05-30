@@ -176,6 +176,14 @@ export default function App() {
 
       {!navigator.userAgent.includes("Mac") && <TitleBar />}
 
+      {/* macOS: draggable region for title bar */}
+      {navigator.userAgent.includes("Mac") && (
+        <div
+          data-tauri-drag-region
+          className="absolute top-0 left-0 right-0 h-8 z-50"
+        />
+      )}
+
       {/* Sidebar blur gradient overlay — same two-layer crossfade */}
       {layerA && (
         <div
@@ -213,7 +221,7 @@ export default function App() {
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <Sidebar view={view} onNavigate={navigate} />
 
-        <div key={view} className="flex-1 flex flex-col min-w-0">
+        <div key={view} className={`flex-1 flex flex-col min-w-0 ${navigator.userAgent.includes("Mac") ? "pt-8" : ""}`}>
           {view === "home" && (
             <HomeView onRefresh={handleRefresh} loading={loading} status={status} isError={isError} />
           )}

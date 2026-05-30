@@ -10,7 +10,6 @@ import {
   IconSearch, IconPalette, IconRelated,
 } from "./icons";
 import Toggle from "./Toggle";
-import GlassPanel from "./GlassPanel";
 
 // ── types ─────────────────────────────────────────────────────────────────────
 
