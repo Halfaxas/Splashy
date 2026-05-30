@@ -55,7 +55,17 @@ fn main() {
             let menu = Menu::with_items(app, &[&open_item, &refresh_item, &sep, &quit_item])?;
 
             TrayIconBuilder::new()
-                .icon(app.default_window_icon().unwrap().clone())
+                .icon({
+                    #[cfg(target_os = "macos")]
+                    {
+                        static TRAY_ICON: &[u8] = include_bytes!("../icons/tray-icon.png");
+                        tauri::image::Image::from_bytes(TRAY_ICON)
+                            .unwrap_or_else(|_| app.default_window_icon().unwrap().clone())
+                    }
+                    #[cfg(not(target_os = "macos"))]
+                    app.default_window_icon().unwrap().clone()
+                })
+                .icon_as_template(true)
                 .menu(&menu)
                 .show_menu_on_left_click(false)
                 .on_menu_event(|app, event| match event.id.as_ref() {
