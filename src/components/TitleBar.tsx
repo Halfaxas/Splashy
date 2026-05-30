@@ -11,7 +11,7 @@ export default function TitleBar() {
   return (
     <div
       className="h-8 flex items-center shrink-0 select-none"
-      style={{ background: "#000000" }}
+      style={{ background: "transparent" }}
     >
       {/* Draggable area */}
       <div onMouseDown={onDragStart} className="flex-1 h-full" />
