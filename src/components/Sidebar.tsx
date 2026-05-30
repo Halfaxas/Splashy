@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import GlassPanel from "./GlassPanel";
 import { View } from "../types";
 import { IconCollections, IconHome, IconPalette, IconRelated, IconSearch, IconSettings, IconTopics, IconUsers } from "./icons";
 import SidebarButton from "./SidebarButton";
@@ -13,9 +12,6 @@ export default function Sidebar({ view, onNavigate }: SidebarProps) {
   const { t } = useTranslation();
   return (
     <aside className="w-20 flex flex-col items-center pt-3 pb-4 shrink-0 relative">
-      <div className="absolute inset-0 z-0">
-        <GlassPanel cornerRadius={0} className="w-full h-full" />
-      </div>
 
       <div className="relative z-10 flex flex-col items-center gap-1 flex-1 w-full overflow-y-auto min-h-0">
         <SidebarButton

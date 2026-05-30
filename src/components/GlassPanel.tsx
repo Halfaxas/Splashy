@@ -5,6 +5,7 @@ interface GlassPanelProps {
   className?: string;
   style?: React.CSSProperties;
   cornerRadius?: number;
+  noBorder?: boolean;
 }
 
 export default function GlassPanel({
@@ -12,6 +13,7 @@ export default function GlassPanel({
   className = "",
   style,
   cornerRadius = 24,
+  noBorder = false,
 }: GlassPanelProps) {
   return (
     <div className={`relative overflow-hidden ${className}`} style={style}>
@@ -23,7 +25,13 @@ export default function GlassPanel({
         elasticity={0.15}
         cornerRadius={cornerRadius}
         overLight={false}
-        style={{ position: "absolute", inset: 0, zIndex: 0, width: "100%", height: "100%" }}
+        style={{
+          position: "absolute",
+          inset: noBorder ? -1 : 0,
+          zIndex: 0,
+          width: noBorder ? "calc(100% + 2px)" : "100%",
+          height: noBorder ? "calc(100% + 2px)" : "100%",
+        }}
       >
         <div />
       </LiquidGlass>

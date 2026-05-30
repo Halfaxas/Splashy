@@ -6,7 +6,6 @@ import { RelatedSourceSummary } from "../types";
 import { IconTrash } from "../components/icons";
 import Toggle from "../components/Toggle";
 import FilterBar from "../components/FilterBar";
-import GlassPanel from "../components/GlassPanel";
 
 export default function RelatedView({ refreshKey = 0 }: { refreshKey?: number }) {
   const { t } = useTranslation();
@@ -97,11 +96,8 @@ export default function RelatedView({ refreshKey = 0 }: { refreshKey?: number })
   }, [sources, filter, search, sortDir, orderMap]);
 
   return (
-    <div className="flex-1 overflow-y-auto relative">
-      <div className="absolute inset-0 z-0 m-3">
-        <GlassPanel className="w-full h-full" />
-      </div>
-      <div className="relative z-10 p-6">
+    <div className="flex-1 overflow-y-auto">
+      <div className="p-6">
       <h2 className="text-lg font-semibold text-white mb-1">{t("related.title")}</h2>
       <p className="text-sm text-white/40 mb-4">{t("related.desc")}</p>
 

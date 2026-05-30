@@ -6,7 +6,6 @@ import { CollectionSummary } from "../types";
 import { IconCollections, IconTrash } from "../components/icons";
 import Toggle from "../components/Toggle";
 import FilterBar from "../components/FilterBar";
-import GlassPanel from "../components/GlassPanel";
 
 export default function CollectionsView({ refreshKey = 0 }: { refreshKey?: number }) {
   const { t } = useTranslation();
@@ -103,11 +102,8 @@ export default function CollectionsView({ refreshKey = 0 }: { refreshKey?: numbe
   }, [collections, filter, search, sortBy, sortDir, orderMap]);
 
   return (
-    <div className="flex-1 overflow-y-auto relative">
-      <div className="absolute inset-0 z-0 m-3">
-        <GlassPanel className="w-full h-full" />
-      </div>
-      <div className="relative z-10 p-6">
+    <div className="flex-1 overflow-y-auto">
+      <div className="p-6">
       <button
         onClick={() => openUrl("https://unsplash.com/collections")}
         className="text-lg font-semibold text-white mb-4 hover:text-white/70 transition-colors cursor-pointer block"
