@@ -10,8 +10,12 @@ pub struct UnsplashClient {
 
 impl UnsplashClient {
     pub fn new(access_key: impl Into<String>) -> Self {
+        let inner = reqwest::Client::builder()
+            .no_proxy()
+            .build()
+            .expect("Failed to build HTTP client");
         Self {
-            inner: reqwest::Client::new(),
+            inner,
             access_key: access_key.into(),
         }
     }

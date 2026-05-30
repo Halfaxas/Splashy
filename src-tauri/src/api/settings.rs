@@ -39,7 +39,11 @@ pub async fn verify_and_save_api_key(key: String) -> Result<(), String> {
     }
 
     // Probe with a cheap public endpoint
-    let resp = reqwest::Client::new()
+    let client = reqwest::Client::builder()
+        .no_proxy()
+        .build()
+        .map_err(|e| format!("Failed to build HTTP client: {}", e))?;
+    let resp = client
         .get("https://api.unsplash.com/photos")
         .query(&[("per_page", "1")])
         .header("Authorization", format!("Client-ID {}", key))

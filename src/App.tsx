@@ -60,7 +60,7 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen text-white overflow-hidden select-none" style={{ background: "#07080e" }}>
-      <TitleBar />
+      {!navigator.userAgent.includes("Mac") && <TitleBar />}
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
         <Sidebar view={view} onNavigate={navigate} />

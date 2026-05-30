@@ -4,8 +4,13 @@ version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
+default-run = "my-wallpaper-app"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "wallpaper_test"
+path = "src/bin/wallpaper_test.rs"
 
 [lib]
 # The `_lib` suffix may seem redundant but it is necessary
@@ -35,3 +40,8 @@ cron = "0.12"
 regex = "1"
 log = "0.4"
 env_logger = "0.11"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-app-kit = { version = "0.3", features = ["NSWorkspace", "NSScreen"] }
+objc2-foundation = { version = "0.3", features = ["NSURL", "NSString", "NSDictionary", "NSArray", "NSError"] }
