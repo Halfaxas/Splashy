@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -13,6 +13,7 @@ import QueriesView from "./views/QueriesView";
 import ColorsView from "./views/ColorsView";
 import RelatedView from "./views/RelatedView";
 import SettingsView from "./views/SettingsView";
+import TitleBar from "./components/TitleBar";
 
 function computeBrightness(url: string): Promise<number> {
   return new Promise((resolve) => {
@@ -41,10 +42,13 @@ function computeBrightness(url: string): Promise<number> {
 export default function App() {
   const [view, setView] = useState<View>("home");
   const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
-  const [wallpaperBg, setWallpaperBg] = useState<string | null>(null);
-  const [fadingBg, setFadingBg] = useState<string | null>(null);
   const [isLightBg, setIsLightBg] = useState(false);
-  const bgTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Two-layer flip-flop for seamless crossfade
+  const [layerA, setLayerA] = useState<string | null>(null);
+  const [layerB, setLayerB] = useState<string | null>(null);
+  const [showB, setShowB] = useState(false); // which layer is on top
+  const activeUrl = showB ? layerB : layerA;
 
   const updateBrightness = useCallback(async (url: string) => {
     const brightness = await computeBrightness(url);
@@ -62,7 +66,8 @@ export default function App() {
       .then((info) => {
         if (info?.path) {
           const url = `${convertFileSrc(info.path)}?t=${Date.now()}`;
-          setWallpaperBg(url);
+          setLayerA(url);
+          setShowB(false);
           updateBrightness(url);
         }
       })
@@ -75,15 +80,23 @@ export default function App() {
             const url = `${convertFileSrc(info.path)}?t=${Date.now()}`;
             const img = new Image();
             img.onload = () => {
-              setFadingBg(url);
+              // Put new image on the hidden layer, then reveal it
+              setShowB((prev) => {
+                if (prev) {
+                  setLayerA(url);
+                } else {
+                  setLayerB(url);
+                }
+                return !prev;
+              });
               updateBrightness(url);
-              if (bgTimerRef.current) clearTimeout(bgTimerRef.current);
-              bgTimerRef.current = setTimeout(() => {
-                setWallpaperBg(url);
-                setFadingBg(null);
-              }, 1000);
             };
-            img.onerror = () => setWallpaperBg(url);
+            img.onerror = () => {
+              setShowB((prev) => {
+                if (prev) { setLayerA(url); } else { setLayerB(url); }
+                return !prev;
+              });
+            };
             img.src = url;
           }
         })
@@ -132,12 +145,13 @@ export default function App() {
     <div
       className={`flex flex-col h-screen overflow-hidden select-none relative transition-colors duration-500 ${isLightBg ? "text-gray-900" : "text-white"}`}
     >
-      {/* Blurred wallpaper background */}
-      {wallpaperBg && (
+      {/* Blurred wallpaper background — two layers crossfading via opacity transition */}
+      {layerA && (
         <div
-          className="absolute inset-0 -z-10"
+          className="absolute inset-0 -z-10 transition-opacity duration-1000 ease-in-out"
           style={{
-            backgroundImage: `url(${wallpaperBg})`,
+            opacity: showB ? 0 : 1,
+            backgroundImage: `url(${layerA})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             filter: "blur(8px) brightness(0.5)",
@@ -145,12 +159,12 @@ export default function App() {
           }}
         />
       )}
-      {fadingBg && (
+      {layerB && (
         <div
-          key={fadingBg}
-          className="absolute inset-0 -z-10 animate-bg-fade"
+          className="absolute inset-0 -z-10 transition-opacity duration-1000 ease-in-out"
           style={{
-            backgroundImage: `url(${fadingBg})`,
+            opacity: showB ? 1 : 0,
+            backgroundImage: `url(${layerB})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             filter: "blur(8px) brightness(0.5)",
@@ -158,15 +172,18 @@ export default function App() {
           }}
         />
       )}
-      {!wallpaperBg && !fadingBg && <div className="absolute inset-0 -z-10" style={{ background: "#07080e" }} />}
+      {!activeUrl && <div className="absolute inset-0 -z-10" style={{ background: "#07080e" }} />}
 
-      {/* Sidebar blur gradient overlay — heavier blur that fades into main content */}
-      {wallpaperBg && (
+      {!navigator.userAgent.includes("Mac") && <TitleBar />}
+
+      {/* Sidebar blur gradient overlay — same two-layer crossfade */}
+      {layerA && (
         <div
-          className="absolute top-0 bottom-0 left-0 pointer-events-none"
+          className="absolute top-0 bottom-0 left-0 pointer-events-none transition-opacity duration-1000 ease-in-out"
           style={{
+            opacity: showB ? 0 : 1,
             width: "180px",
-            backgroundImage: `url(${wallpaperBg})`,
+            backgroundImage: `url(${layerA})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             filter: "blur(32px) brightness(0.4)",
@@ -176,13 +193,13 @@ export default function App() {
           }}
         />
       )}
-      {fadingBg && (
+      {layerB && (
         <div
-          key={`sidebar-fade-${fadingBg}`}
-          className="absolute top-0 bottom-0 left-0 pointer-events-none animate-bg-fade"
+          className="absolute top-0 bottom-0 left-0 pointer-events-none transition-opacity duration-1000 ease-in-out"
           style={{
+            opacity: showB ? 1 : 0,
             width: "180px",
-            backgroundImage: `url(${fadingBg})`,
+            backgroundImage: `url(${layerB})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             filter: "blur(32px) brightness(0.4)",

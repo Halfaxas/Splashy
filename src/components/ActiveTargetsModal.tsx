@@ -10,6 +10,7 @@ import {
   IconSearch, IconPalette, IconRelated,
 } from "./icons";
 import Toggle from "./Toggle";
+import GlassPanel from "./GlassPanel";
 
 // ── types ─────────────────────────────────────────────────────────────────────
 
@@ -172,14 +173,17 @@ function GroupsModal({ target, timeGroups, onClose, onToggleGroup }: GroupsModal
 
   return (
     <div
-      className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-60 flex items-center justify-center p-4 ${
+      className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-60 flex items-center justify-center p-4 ${
         closing ? "modal-backdrop-out" : "modal-backdrop-in"
       }`}
       onClick={(e) => { if (e.target === e.currentTarget) close(); }}
     >
-      <div className={`w-full max-w-xs bg-[#0f1420] border border-white/10 rounded-2xl shadow-2xl ${
+      <div className={`w-full max-w-xs rounded-2xl shadow-2xl relative ${
         closing ? "modal-panel-out" : "modal-panel-in"
       }`}>
+        <div className="absolute -inset-1 -z-10 overflow-hidden rounded-2xl">
+          <GlassPanel cornerRadius={16} className="w-full h-full" />
+        </div>
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/8">
           <div className="flex items-center gap-2.5">
@@ -379,14 +383,17 @@ export default function ActiveTargetsModal({ onClose }: Props) {
   return (
     <>
       <div
-        className={`fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 ${
+        className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 ${
           closing ? "modal-backdrop-out" : "modal-backdrop-in"
         }`}
         onClick={(e) => { if (e.target === e.currentTarget) close(); }}
       >
-        <div className={`w-full max-w-sm bg-[#0f1420] border border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[80vh] ${
+        <div className={`w-full max-w-sm rounded-2xl shadow-2xl flex flex-col max-h-[80vh] relative ${
           closing ? "modal-panel-out" : "modal-panel-in"
         }`}>
+          <div className="absolute -inset-4 -z-10 overflow-hidden rounded-2xl">
+            <GlassPanel cornerRadius={16} className="w-full h-full" />
+          </div>
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-white/8 shrink-0">
             <div>
