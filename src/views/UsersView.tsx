@@ -6,6 +6,7 @@ import { UserSummary } from "../types";
 import { IconTrash } from "../components/icons";
 import Toggle from "../components/Toggle";
 import FilterBar from "../components/FilterBar";
+import GlassPanel from "../components/GlassPanel";
 
 export default function UsersView({ refreshKey = 0 }: { refreshKey?: number }) {
   const { t } = useTranslation();
@@ -102,7 +103,11 @@ export default function UsersView({ refreshKey = 0 }: { refreshKey?: number }) {
   }, [users, filter, search, sortBy, sortDir, orderMap]);
 
   return (
-    <div className="flex-1 p-6 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto relative">
+      <div className="absolute inset-0 z-0 m-3">
+        <GlassPanel className="w-full h-full" />
+      </div>
+      <div className="relative z-10 p-6">
       <h2 className="text-lg font-semibold text-white mb-4">{t("users.title")}</h2>
 
       <div className="flex gap-2 mb-4">
@@ -212,6 +217,7 @@ export default function UsersView({ refreshKey = 0 }: { refreshKey?: number }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

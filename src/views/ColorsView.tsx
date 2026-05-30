@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
 import { ColorSource } from "../types";
 import Toggle from "../components/Toggle";
+import GlassPanel from "../components/GlassPanel";
 
 const COLOR_META: Record<string, { hex: string; ring: string }> = {
   black:   { hex: "#111111", ring: "#555555" },
@@ -48,7 +49,11 @@ export default function ColorsView({ refreshKey = 0 }: { refreshKey?: number }) 
   };
 
   return (
-    <div className="flex-1 p-6 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto relative">
+      <div className="absolute inset-0 z-0 m-3">
+        <GlassPanel className="w-full h-full" />
+      </div>
+      <div className="relative z-10 p-6">
       <h2 className="text-lg font-semibold text-white mb-1">{t("colors.title")}</h2>
       <p className="text-sm text-white/40 mb-6">{t("colors.desc")}</p>
 
@@ -82,6 +87,7 @@ export default function ColorsView({ refreshKey = 0 }: { refreshKey?: number }) 
           })}
         </div>
       )}
+      </div>
     </div>
   );
 }
