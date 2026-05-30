@@ -140,6 +140,8 @@
     "scheduleOnceADayDesc": "At 9:00 AM",
     "scheduleCustomActive": "Custom schedule active — switch to Advanced to edit.",
     "startWithWindows": "Start with Windows",
+    "startWithMac": "Start with macOS",
+    "startWithLinux": "Start with Linux",
     "startWithWindowsDesc": "Open automatically when you turn on your computer",
     "sectionApiKey": "Unsplash API Key",
     "apiKeyDesc": "Your Unsplash access key. Get one free at unsplash.com/developers.",

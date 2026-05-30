@@ -140,6 +140,8 @@
     "scheduleOnceADayDesc": "La ora 9:00",
     "scheduleCustomActive": "Programare personalizată activă — treci la Avansat pentru a edita.",
     "startWithWindows": "Pornire cu Windows",
+    "startWithMac": "Pornire cu macOS",
+    "startWithLinux": "Pornire cu Linux",
     "startWithWindowsDesc": "Se deschide automat când pornești calculatorul",
     "sectionApiKey": "Cheie API Unsplash",
     "apiKeyDesc": "Cheia ta de acces Unsplash. Obține una gratuit la unsplash.com/developers.",

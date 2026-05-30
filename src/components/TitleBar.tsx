@@ -13,13 +13,15 @@ export default function TitleBar() {
       className="h-8 flex items-center shrink-0 select-none border-b border-white/5"
       style={{ background: "#07080e" }}
     >
-      {/* App name — on macOS shift right to clear traffic lights */}
-      <span
-        onMouseDown={onDragStart}
-        className={`text-[11px] font-medium text-white/25 tracking-wide cursor-default ${isMac ? "pl-20" : "pl-4"}`}
-      >
-        Splashy
-      </span>
+      {/* App name — hidden on macOS (native title bar already shows it) */}
+      {!isMac && (
+        <span
+          onMouseDown={onDragStart}
+          className="text-[11px] font-medium text-white/25 tracking-wide cursor-default pl-4"
+        >
+          Splashy
+        </span>
+      )}
 
       {/* Fills remaining space — draggable */}
       <div onMouseDown={onDragStart} className="flex-1 h-full" />

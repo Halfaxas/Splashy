@@ -52,7 +52,7 @@ pub async fn change_wallpaper() -> Result<String, String> {
             let _ = std::fs::rename(&next_meta, &current_meta);
         }
 
-        set_wallpaper(&current_img)?;
+        set_wallpaper(&current_img, Some(&prev_img))?;
 
         result_msg = read_meta(&current_meta)
             .map(|m| format!("Wallpaper set!\nPhoto by {} — https://unsplash.com/photos/{}", m.author_name, m.photo_id))
@@ -81,7 +81,7 @@ pub async fn change_wallpaper() -> Result<String, String> {
         download_wallpaper_to_path(&client, &photo, &settings.quality, &current_img).await?;
         write_meta(&photo, getter.source_type, getter.source_value, time_group, &current_meta)?;
 
-        set_wallpaper(&current_img)?;
+        set_wallpaper(&current_img, Some(&prev_img))?;
         log::info!("[wallpaper] Wallpaper set — photo by @{}", photo.user.username);
         result_msg = format!(
             "Wallpaper set!\nPhoto by {} — https://unsplash.com/photos/{}",
@@ -254,7 +254,7 @@ fn compute_next_fire_time(cron_expr: &str) -> Option<NaiveTime> {
 }
 
 /// Set the desktop wallpaper to the file at `path`.
-pub fn set_wallpaper(path: &PathBuf) -> Result<(), String> {
+pub fn set_wallpaper(path: &PathBuf, prev_path: Option<&PathBuf>) -> Result<(), String> {
     let path_str = path
         .canonicalize()
         .map_err(|e| format!("Failed to canonicalize path: {}", e))?
@@ -265,10 +265,98 @@ pub fn set_wallpaper(path: &PathBuf) -> Result<(), String> {
         .unwrap_or(&path_str)
         .to_string();
 
-    wallpaper::set_from_path(&path_str)
-        .map_err(|e| format!("Failed to set wallpaper: {}", e))?;
+    #[cfg(target_os = "macos")]
+    {
+        let prev_str = prev_path
+            .filter(|p| p.exists())
+            .and_then(|p| p.canonicalize().ok())
+            .map(|p| p.to_string_lossy().to_string());
+        return set_wallpaper_macos(&path_str, prev_str.as_deref());
+    }
+
     #[cfg(not(target_os = "macos"))]
-    wallpaper::set_mode(wallpaper::Mode::Crop)
-        .map_err(|e| format!("Failed to set wallpaper mode: {}", e))?;
+    {
+        wallpaper::set_from_path(&path_str)
+            .map_err(|e| format!("Failed to set wallpaper: {}", e))?;
+        wallpaper::set_mode(wallpaper::Mode::Crop)
+            .map_err(|e| format!("Failed to set wallpaper mode: {}", e))?;
+        Ok(())
+    }
+}
+
+/// Sets the wallpaper on macOS using NSWorkspace with fill/crop scaling.
+/// Each call writes the image to a unique timestamped filename so macOS
+/// never hits its URL→bitmap cache (which causes stale content to be shown
+/// when the same path is reused with different content across cycles).
+#[cfg(target_os = "macos")]
+fn set_wallpaper_macos(path_str: &str, _prev_str: Option<&str>) -> Result<(), String> {
+    use objc2::runtime::AnyObject;
+    use objc2::MainThreadMarker;
+    use objc2_app_kit::{
+        NSScreen, NSWorkspace, NSWorkspaceDesktopImageAllowClippingKey,
+        NSWorkspaceDesktopImageScalingKey,
+    };
+    use objc2_foundation::{NSDictionary, NSNumber, NSString, NSURL};
+
+    // macOS caches desktop wallpapers keyed by file URL. Reusing the same path
+    // (current_wallpaper.jpg) with new content across cycles causes macOS to
+    // show the stale cached bitmap instead of the updated file. Using a fresh
+    // unique URL every call forces macOS to re-read from disk.
+    let parent = std::path::Path::new(path_str)
+        .parent()
+        .unwrap_or(std::path::Path::new("/tmp"));
+
+    let ts = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis();
+    let active_name = format!("wallpaper_active_{}.jpg", ts);
+    let active_path = parent.join(&active_name);
+
+    std::fs::copy(path_str, &active_path)
+        .map_err(|e| format!("Failed to prepare wallpaper: {}", e))?;
+
+    let active_str = active_path.to_string_lossy().to_string();
+
+    unsafe {
+        // SAFETY: setDesktopImageURL:forScreen:options:error: is documented as
+        // thread-safe. MainThreadMarker is used only to satisfy NSScreen::screens.
+        let mtm = MainThreadMarker::new_unchecked();
+
+        let ns_path = NSString::from_str(&active_str);
+        let url = NSURL::fileURLWithPath(&ns_path);
+        let workspace = NSWorkspace::sharedWorkspace();
+
+        // NSImageScaleProportionallyUpOrDown (3) + allowClipping = true → fill/crop
+        let scaling_val = NSNumber::new_usize(3);
+        let clipping_val = NSNumber::new_bool(true);
+        let scaling_any = &*((&*scaling_val as *const NSNumber).cast::<AnyObject>());
+        let clipping_any = &*((&*clipping_val as *const NSNumber).cast::<AnyObject>());
+
+        let options = NSDictionary::<NSString, AnyObject>::from_slices(
+            &[NSWorkspaceDesktopImageScalingKey, NSWorkspaceDesktopImageAllowClippingKey],
+            &[scaling_any, clipping_any],
+        );
+
+        for screen in NSScreen::screens(mtm).iter() {
+            workspace
+                .setDesktopImageURL_forScreen_options_error(&url, &screen, &options)
+                .map_err(|e| format!("Failed to set wallpaper: {}", e.localizedDescription()))?;
+        }
+    }
+
+    // Clean up any previous unique-named copies, keeping only the one we just set.
+    if let Ok(entries) = std::fs::read_dir(parent) {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().to_string();
+            if name.starts_with("wallpaper_active_")
+                && name.ends_with(".jpg")
+                && name != active_name
+            {
+                let _ = std::fs::remove_file(entry.path());
+            }
+        }
+    }
+
     Ok(())
 }

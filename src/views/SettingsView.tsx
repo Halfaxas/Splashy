@@ -10,6 +10,13 @@ import Toggle from "../components/Toggle";
 
 const BMC_URL = "https://buymeacoffee.com/halfaxa";
 
+function getOSStartLabel(): "startWithWindows" | "startWithMac" | "startWithLinux" {
+  const p = navigator.platform.toLowerCase();
+  if (p.startsWith("mac")) return "startWithMac";
+  if (p.startsWith("win")) return "startWithWindows";
+  return "startWithLinux";
+}
+
 const BASIC_CRONS = new Set([
   "@startup",
   "*/30 * * * *",
@@ -350,7 +357,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
           <div className="bg-white/4 rounded-2xl border border-white/8 divide-y divide-white/6">
             <div className="flex items-center justify-between px-4 py-3.5">
               <div>
-                <p className="text-sm font-medium text-white">{t("settings.startWithWindows")}</p>
+                <p className="text-sm font-medium text-white">{t(`settings.${getOSStartLabel()}`)}</p>
                 <p className="text-xs text-white/40 mt-0.5">{t("settings.startWithWindowsDesc")}</p>
               </div>
               <Toggle enabled={startOnLogin} onChange={handleStartOnLoginToggle} />
