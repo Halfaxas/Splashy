@@ -1,6 +1,6 @@
 [package]
 name = "my-wallpaper-app"
-version = "0.1.5"
+version = "1.0.1"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
