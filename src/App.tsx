@@ -133,6 +133,20 @@ export default function App() {
     }
   };
 
+  useEffect(() => {
+    const unlisten = listen<string>("navigate-view", (event) => {
+      if (event.payload === "settings") {
+        setView("settings");
+        setStatus(null);
+        setIsError(false);
+      }
+    });
+
+    return () => {
+      unlisten.then((f) => f());
+    };
+  }, []);
+
   if (hasApiKey === null) {
     return <div className="h-screen" style={{ background: "#07080e" }} />;
   }
