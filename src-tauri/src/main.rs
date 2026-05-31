@@ -12,7 +12,7 @@ mod unsplash;
 mod wallpaper;
 
 use tauri::{
-    menu::{Menu, MenuItem, PredefinedMenuItem},
+    menu::{Menu, MenuItem, PredefinedMenuItem, Submenu},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
     Emitter, Manager,
 };
@@ -28,7 +28,57 @@ fn main() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--hidden"]),
         ))
+        .on_menu_event(|app, event| {
+            match event.id.as_ref() {
+                "open_settings" => {
+                    if let Some(w) = app.get_webview_window("main") {
+                        let _ = w.show();
+                        let _ = w.set_focus();
+                    }
+                    let _ = app.emit("navigate-view", "settings");
+                }
+                "refresh_wallpaper_app_menu" => {
+                    let handle = app.clone();
+                    tauri::async_runtime::spawn(async move {
+                        match crate::wallpaper::change_wallpaper().await {
+                            Ok(_) => {
+                                let _ = handle.emit("wallpaper-changed", ());
+                            }
+                            Err(e) => log::error!("[app-menu] Refresh failed: {}", e),
+                        }
+                    });
+                }
+                _ => {}
+            }
+        })
         .setup(|app| {
+            #[cfg(target_os = "macos")]
+            {
+                let splashy_refresh_item = MenuItem::with_id(
+                    app,
+                    "refresh_wallpaper_app_menu",
+                    "Refresh Wallpaper",
+                    true,
+                    None::<&str>,
+                )?;
+                let splashy_menu = Submenu::with_items(app, "Splashy", true, &[&splashy_refresh_item])?;
+
+                let settings_item = MenuItem::with_id(
+                    app,
+                    "open_settings",
+                    "Settings",
+                    true,
+                    Some("Cmd+,"),
+                )?;
+                let file_menu = Submenu::with_items(app, "File", true, &[&settings_item])?;
+
+                let fullscreen_item = PredefinedMenuItem::fullscreen(app, None::<&str>)?;
+                let view_menu = Submenu::with_items(app, "View", true, &[&fullscreen_item])?;
+
+                let app_menu = Menu::with_items(app, &[&splashy_menu, &file_menu, &view_menu])?;
+                app.set_menu(app_menu)?;
+            }
+
             // On Windows, disable decorations (custom TitleBar component handles it)
             #[cfg(target_os = "windows")]
             if let Some(w) = app.get_webview_window("main") {
