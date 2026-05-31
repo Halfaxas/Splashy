@@ -52,22 +52,27 @@ function SortDropdown({ value, options, onChange }: {
       </button>
 
       {open && (
-        <div className="absolute top-full mt-1 left-0 z-50 min-w-full rounded-lg border border-white/10 overflow-hidden shadow-2xl shadow-black/60"
-          style={{ background: "#0f1117" }}
-        >
-          {options.map(opt => (
-            <button
-              key={opt.value}
-              onClick={() => { onChange(opt.value); setOpen(false); }}
-              className={`w-full text-left px-3 py-2 text-xs transition-colors cursor-pointer ${
-                opt.value === value
-                  ? "bg-white/12 text-white"
-                  : "text-white/70 hover:bg-white/8 hover:text-white"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
+        <div className="absolute top-full mt-1 left-0 z-50 min-w-full rounded-xl overflow-hidden border border-white/[0.10] shadow-lg shadow-black/20">
+          {/* Emulated liquid glass */}
+          <div className="absolute inset-0 z-0 pointer-events-none backdrop-blur-lg bg-white/[0.04]" />
+          <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-br from-white/[0.06] via-transparent to-white/[0.02]" />
+          <div className="absolute inset-0 z-0 pointer-events-none bg-black/10" />
+
+          <div className="relative z-[2]">
+            {options.map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => { onChange(opt.value); setOpen(false); }}
+                className={`w-full text-left px-3 py-2 text-xs transition-colors cursor-pointer ${
+                  opt.value === value
+                    ? "bg-white/12 text-white"
+                    : "text-white/70 hover:bg-white/8 hover:text-white"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
