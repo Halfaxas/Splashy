@@ -13,7 +13,7 @@ mod wallpaper;
 
 use tauri::{
     menu::{Menu, MenuItem, PredefinedMenuItem, Submenu},
-    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    tray::TrayIconBuilder,
     Emitter, Manager,
 };
 
@@ -97,11 +97,12 @@ fn main() {
             scheduler::start_wallpaper_scheduler(app.handle().clone());
 
             // System tray
+            let open_item = MenuItem::with_id(app, "open", "Open Splashy", true, None::<&str>)?;
             let refresh_item = MenuItem::with_id(app, "refresh", "Refresh Wallpaper", true, None::<&str>)?;
-            let open_item = MenuItem::with_id(app, "open", "Open App", true, None::<&str>)?;
+            let settings_item_tray = MenuItem::with_id(app, "tray_settings", "Settings", true, None::<&str>)?;
             let sep = PredefinedMenuItem::separator(app)?;
             let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&open_item, &refresh_item, &sep, &quit_item])?;
+            let menu = Menu::with_items(app, &[&open_item, &refresh_item, &settings_item_tray, &sep, &quit_item])?;
 
             TrayIconBuilder::new()
                 .icon({
@@ -116,7 +117,7 @@ fn main() {
                 })
                 .icon_as_template(true)
                 .menu(&menu)
-                .show_menu_on_left_click(false)
+                .show_menu_on_left_click(true)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "refresh" => {
                         let handle = app.clone();
@@ -133,16 +134,15 @@ fn main() {
                             let _ = w.set_focus();
                         }
                     }
-                    "quit" => app.exit(0),
-                    _ => {}
-                })
-                .on_tray_icon_event(|tray, event| {
-                    if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, .. } = event {
-                        if let Some(w) = tray.app_handle().get_webview_window("main") {
+                    "tray_settings" => {
+                        if let Some(w) = app.get_webview_window("main") {
                             let _ = w.show();
                             let _ = w.set_focus();
                         }
+                        let _ = app.emit("navigate-view", "settings");
                     }
+                    "quit" => app.exit(0),
+                    _ => {}
                 })
                 .build(app)?;
 

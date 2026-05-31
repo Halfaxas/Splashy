@@ -216,25 +216,37 @@ export default function CollectionsView({ refreshKey = 0 }: { refreshKey?: numbe
       </div>
 
       {confirmDelete && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-[#0f1117] border border-white/10 rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
-            <h3 className="text-white font-semibold mb-2">{t("collections.deleteTitle")}</h3>
-            <p className="text-white/70 text-sm mb-6">
-              {t("collections.deleteBody", { title: confirmDelete.title })}
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setConfirmDelete(null)}
-                className="px-4 py-2 text-sm rounded-lg bg-white/8 hover:bg-white/12 text-white transition-colors cursor-pointer"
-              >
-                {t("common.cancel")}
-              </button>
-              <button
-                onClick={confirmAndDelete}
-                className="px-4 py-2 text-sm rounded-lg bg-red-600 hover:bg-red-500 text-white transition-colors cursor-pointer"
-              >
-                {t("common.delete")}
-              </button>
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-6 modal-backdrop-in"
+          onClick={(e) => { if (e.target === e.currentTarget) setConfirmDelete(null); }}
+        >
+          <div className="w-full max-w-sm">
+            <div className="relative rounded-3xl overflow-hidden border border-white/[0.12] shadow-2xl shadow-black/40">
+              {/* Emulated liquid glass */}
+              <div className="absolute inset-0 z-0 pointer-events-none backdrop-blur-2xl bg-white/[0.04]" />
+              <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-br from-white/[0.08] via-transparent to-white/[0.03]" />
+              <div className="absolute inset-0 z-0 pointer-events-none bg-black/35" />
+
+              <div className="relative z-[2] p-6">
+                <h3 className="text-white font-semibold mb-2">{t("collections.deleteTitle")}</h3>
+                <p className="text-white/70 text-sm mb-6">
+                  {t("collections.deleteBody", { title: confirmDelete.title })}
+                </p>
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setConfirmDelete(null)}
+                    className="px-4 py-2 text-sm rounded-lg bg-white/8 hover:bg-white/12 text-white transition-colors cursor-pointer"
+                  >
+                    {t("common.cancel")}
+                  </button>
+                  <button
+                    onClick={confirmAndDelete}
+                    className="px-4 py-2 text-sm rounded-lg bg-red-600 hover:bg-red-500 text-white transition-colors cursor-pointer"
+                  >
+                    {t("common.delete")}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
