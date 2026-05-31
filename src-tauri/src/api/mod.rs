@@ -1,3 +1,4 @@
+pub mod batch;
 pub mod collections;
 pub mod colors;
 pub mod queries;
