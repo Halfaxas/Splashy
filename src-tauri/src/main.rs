@@ -201,6 +201,7 @@ fn main() {
             api::settings::verify_and_save_api_key,
             api::time_groups::get_time_groups,
             api::time_groups::set_target_groups,
+            api::batch::batch_toggle_sources,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
