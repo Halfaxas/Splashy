@@ -72,10 +72,22 @@ fn main() {
                 )?;
                 let file_menu = Submenu::with_items(app, "File", true, &[&settings_item])?;
 
+                let cut_item = PredefinedMenuItem::cut(app, None::<&str>)?;
+                let copy_item = PredefinedMenuItem::copy(app, None::<&str>)?;
+                let paste_item = PredefinedMenuItem::paste(app, None::<&str>)?;
+                let select_all_item = PredefinedMenuItem::select_all(app, None::<&str>)?;
+                let undo_item = PredefinedMenuItem::undo(app, None::<&str>)?;
+                let redo_item = PredefinedMenuItem::redo(app, None::<&str>)?;
+                let edit_menu = Submenu::with_items(app, "Edit", true, &[
+                    &undo_item, &redo_item,
+                    &PredefinedMenuItem::separator(app)?,
+                    &cut_item, &copy_item, &paste_item, &select_all_item,
+                ])?;
+
                 let fullscreen_item = PredefinedMenuItem::fullscreen(app, None::<&str>)?;
                 let view_menu = Submenu::with_items(app, "View", true, &[&fullscreen_item])?;
 
-                let app_menu = Menu::with_items(app, &[&splashy_menu, &file_menu, &view_menu])?;
+                let app_menu = Menu::with_items(app, &[&splashy_menu, &file_menu, &edit_menu, &view_menu])?;
                 app.set_menu(app_menu)?;
             }
 
