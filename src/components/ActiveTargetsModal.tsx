@@ -25,17 +25,6 @@ interface UnifiedTarget {
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
-async function disableTarget(target: UnifiedTarget): Promise<void> {
-  switch (target.kind) {
-    case "collection": return invoke("toggle_collection",     { id: target.id,        enabled: false });
-    case "user":       return invoke("toggle_user",           { username: target.id,  enabled: false });
-    case "topic":      return invoke("toggle_topic",          { topicId: target.id,   enabled: false });
-    case "query":      return invoke("toggle_query",          { id: target.id,        enabled: false });
-    case "color":      return invoke("toggle_color",          { color: target.id,     enabled: false });
-    case "related":    return invoke("toggle_related_source", { photoId: target.id,   enabled: false });
-  }
-}
-
 function getTargetId(kind: TargetKind, id: string): string {
   switch (kind) {
     case "collection": return `collection_${id}`;
@@ -260,9 +249,10 @@ export default function ActiveTargetsModal({ onClose }: Props) {
   const [targets, setTargets] = useState<UnifiedTarget[]>([]);
   const [timeGroups, setTimeGroups] = useState<TimeGroup[]>([]);
   const [loading, setLoading] = useState(true);
-  const [disablingAll, setDisablingAll] = useState(false);
   const [closing, setClosing] = useState(false);
   const [groupTarget, setGroupTarget] = useState<UnifiedTarget | null>(null);
+  const [disabledIds, setDisabledIds] = useState<Set<string>>(new Set());
+  const pendingChangesRef = useRef<Map<string, { kind: string; id: string; enabled: boolean }>>(new Map());
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const KIND_META: Record<TargetKind, { label: string; color: string; Icon: React.FC<{ className?: string }> }> = {
@@ -328,29 +318,51 @@ export default function ActiveTargetsModal({ onClose }: Props) {
   const close = useCallback(() => {
     if (closing) return;
     setClosing(true);
+    // Flush all pending toggle changes to backend in one batch
+    const changes = Array.from(pendingChangesRef.current.values());
+    if (changes.length > 0) {
+      invoke("batch_toggle_sources", { changes }).catch((e) =>
+        console.error("[ActiveTargetsModal] batch_toggle_sources failed:", e)
+      );
+      pendingChangesRef.current.clear();
+    }
     timerRef.current = setTimeout(onClose, CLOSE_DURATION);
   }, [closing, onClose]);
 
-  const handleToggle = async (target: UnifiedTarget) => {
-    setTargets(prev => prev.filter(t => !(t.kind === target.kind && t.id === target.id)));
-    try {
-      await disableTarget(target);
-    } catch {
-      setTargets(prev => [...prev, target]);
+  const handleToggle = (target: UnifiedTarget) => {
+    const key = `${target.kind}:${target.id}`;
+    const isCurrentlyDisabled = disabledIds.has(key);
+
+    if (isCurrentlyDisabled) {
+      // Re-enable locally
+      setDisabledIds(prev => { const next = new Set(prev); next.delete(key); return next; });
+      // If there was a pending disable, remove it; otherwise record an enable
+      if (pendingChangesRef.current.has(key)) {
+        pendingChangesRef.current.delete(key);
+      } else {
+        pendingChangesRef.current.set(key, { kind: target.kind, id: target.id, enabled: true });
+      }
+    } else {
+      // Disable locally
+      setDisabledIds(prev => new Set(prev).add(key));
+      // If there was a pending enable, remove it; otherwise record a disable
+      if (pendingChangesRef.current.has(key)) {
+        pendingChangesRef.current.delete(key);
+      } else {
+        pendingChangesRef.current.set(key, { kind: target.kind, id: target.id, enabled: false });
+      }
     }
   };
 
-  const handleDisableAll = async () => {
-    setDisablingAll(true);
+  const handleDisableAll = () => {
     const current = [...targets];
-    setTargets([]);
-    try {
-      for (const target of current) await disableTarget(target);
-    } catch {
-      await load();
-    } finally {
-      setDisablingAll(false);
+    for (const target of current) {
+      const key = `${target.kind}:${target.id}`;
+      if (!disabledIds.has(key)) {
+        pendingChangesRef.current.set(key, { kind: target.kind, id: target.id, enabled: false });
+      }
     }
+    setDisabledIds(new Set(current.map(t => `${t.kind}:${t.id}`)));
   };
 
   const handleGroupToggle = async (groupId: string, isIn: boolean) => {
@@ -411,9 +423,9 @@ export default function ActiveTargetsModal({ onClose }: Props) {
                 <h2 className="text-base font-semibold text-white tracking-tight">{t("activeTargets.title")}</h2>
                 {!loading && (
                   <p className="text-xs text-white/35 mt-1">
-                    {targets.length === 0
+                    {targets.length - disabledIds.size === 0
                       ? t("activeTargets.noneActive")
-                      : t("activeTargets.countActive", { count: targets.length })}
+                      : t("activeTargets.countActive", { count: targets.length - disabledIds.size })}
                   </p>
                 )}
               </div>
@@ -421,7 +433,6 @@ export default function ActiveTargetsModal({ onClose }: Props) {
                 {targets.length > 0 && (
                   <button
                     onClick={handleDisableAll}
-                    disabled={disablingAll}
                     className="text-[11px] font-medium px-3 py-1.5 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/15 hover:border-red-500/30 transition-all cursor-pointer disabled:opacity-50 backdrop-blur-sm"
                   >
                     {t("activeTargets.disableAll")}
@@ -456,11 +467,16 @@ export default function ActiveTargetsModal({ onClose }: Props) {
                 {targets.map((target) => {
                   const meta = KIND_META[target.kind];
                   const Icon = meta.Icon;
+                  const isDisabled = disabledIds.has(`${target.kind}:${target.id}`);
 
                   return (
                     <div
                       key={`${target.kind}:${target.id}`}
-                      className="group flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.1] transition-all"
+                      className={`group flex items-center gap-3 px-4 py-3 rounded-2xl border transition-[opacity,background-color,border-color] duration-200 ease-in-out ${
+                        isDisabled
+                          ? "bg-white/[0.01] border-white/[0.04] opacity-50"
+                          : "bg-white/[0.03] hover:bg-white/[0.06] border-white/[0.06] hover:border-white/[0.1]"
+                      }`}
                     >
                       <div className={`flex items-center gap-1.5 shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wide ${meta.color}`}>
                         <Icon className="w-3 h-3" />
@@ -483,7 +499,7 @@ export default function ActiveTargetsModal({ onClose }: Props) {
                         <IconClock className="relative z-10 w-3.5 h-3.5 text-white/35" />
                       </button>
 
-                      <Toggle enabled={true} onChange={() => handleToggle(target)} />
+                      <Toggle enabled={!isDisabled} onChange={() => handleToggle(target)} />
                     </div>
                   );
                 })}
