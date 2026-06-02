@@ -85,3 +85,9 @@ xattr -cr /Applications/Splashy.app
 If you enjoy Splashy, consider buying me a coffee
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-halfaxa-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/halfaxa)
+
+---
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
