@@ -1,5 +1,7 @@
 # Splashy
 
+**https://halfaxas.github.io/Splashy/**
+
 A beautiful desktop wallpaper app powered by [Unsplash](https://unsplash.com). Automatically rotates your wallpaper on a schedule from your favourite collections, photographers, topics, colours, or search queries.
 
 ![Hero](./screenshots/hero.gif)
