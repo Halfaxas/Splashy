@@ -48,7 +48,7 @@ body {
 }
 
 .topbar {
-  max-width: 1100px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 1.2rem 1.1rem;
   display: flex;
@@ -64,7 +64,7 @@ body {
 }
 
 main {
-  max-width: 1100px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 1.1rem 2.8rem;
 }
@@ -188,10 +188,11 @@ h1 {
 }
 
 .screen-grid {
-  margin-top: 1rem;
+  margin-top: 2rem;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  width: 100%;
 }
 
 .screen-grid figure {
@@ -202,6 +203,8 @@ h1 {
 .screen-grid img {
   width: 100%;
   display: block;
+  max-height: 1200px;
+  object-fit: contain;
 }
 
 .screen-grid figcaption {
@@ -210,10 +213,7 @@ h1 {
 
 .cta {
   margin-top: 2.6rem;
-  border: 1px solid var(--line);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(233, 233, 233, 0.95));
-  border-radius: 1rem;
-  padding: 1.3rem;
+  padding: 0;
   animation: rise 0.8s ease-out;
 }
 
@@ -226,7 +226,7 @@ h1 {
 }
 
 footer {
-  max-width: 1100px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 1rem 1.1rem 2rem;
   color: var(--muted);
