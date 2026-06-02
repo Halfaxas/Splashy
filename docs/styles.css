@@ -1,0 +1,260 @@
+:root {
+  --bg: #f2f2f2;
+  --ink: #0d0d0d;
+  --muted: #595959;
+  --panel: rgba(255, 255, 255, 0.76);
+  --line: rgba(13, 13, 13, 0.14);
+  --accent: #111111;
+  --accent-ink: #ffffff;
+  --glow-a: #e6e6e6;
+  --glow-b: #d3d3d3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Work Sans", sans-serif;
+  background: radial-gradient(circle at 15% 20%, #ffffff 0%, var(--bg) 34%),
+    radial-gradient(circle at 85% 0%, #ededed 0%, transparent 30%), var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.bg-glow {
+  position: fixed;
+  width: 40rem;
+  height: 40rem;
+  border-radius: 999px;
+  filter: blur(70px);
+  opacity: 0.25;
+  z-index: -1;
+}
+
+.bg-glow-left {
+  background: var(--glow-a);
+  top: -16rem;
+  left: -18rem;
+}
+
+.bg-glow-right {
+  background: var(--glow-b);
+  right: -16rem;
+  bottom: -18rem;
+}
+
+.topbar {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.2rem 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  font-family: "Libre Baskerville", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.1rem 2.8rem;
+}
+
+.hero {
+  padding: 2rem 0 1rem;
+  animation: rise 0.65s ease-out;
+}
+
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+h1,
+h2 {
+  font-family: "Libre Baskerville", serif;
+  margin: 0;
+  line-height: 1.05;
+}
+
+h1 {
+  font-size: clamp(2.2rem, 7vw, 4.3rem);
+  max-width: 12ch;
+}
+
+.hero-copy {
+  margin-top: 1rem;
+  max-width: 58ch;
+  color: var(--muted);
+}
+
+.hero-actions {
+  margin-top: 1.2rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--accent-ink);
+  text-decoration: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.65rem 1.1rem;
+  border: 1px solid transparent;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-small {
+  font-size: 0.85rem;
+  padding: 0.45rem 0.9rem;
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.45);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.hero-shot {
+  margin: 1.6rem 0 0;
+}
+
+.hero-shot img {
+  width: 100%;
+  border-radius: 1.1rem;
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
+}
+
+.feature-grid {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.feature-grid article {
+  background: var(--panel);
+  backdrop-filter: blur(7px);
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 1rem;
+  animation: rise 0.65s ease-out;
+}
+
+.feature-grid h2 {
+  font-size: 1.25rem;
+}
+
+.feature-grid p {
+  margin-top: 0.6rem;
+  color: var(--muted);
+}
+
+.screens {
+  margin-top: 2.4rem;
+}
+
+.screens h2 {
+  font-size: clamp(1.8rem, 4.2vw, 2.4rem);
+}
+
+.screens-note {
+  margin: 0.65rem 0 0;
+  max-width: 72ch;
+  color: var(--muted);
+}
+
+.screen-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.screen-grid figure {
+  margin: 0;
+  animation: rise 0.8s ease-out;
+}
+
+.screen-grid img {
+  width: 100%;
+  display: block;
+}
+
+.screen-grid figcaption {
+  display: none;
+}
+
+.cta {
+  margin-top: 2.6rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(233, 233, 233, 0.95));
+  border-radius: 1rem;
+  padding: 1.3rem;
+  animation: rise 0.8s ease-out;
+}
+
+.cta h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.cta p {
+  color: var(--muted);
+}
+
+footer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem 1.1rem 2rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+footer a {
+  color: inherit;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .screen-grid {
+    grid-template-columns: 1fr;
+  }
+}

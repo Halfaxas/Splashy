@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Splashy | Unsplash Wallpaper App</title>
+    <meta
+      name="description"
+      content="Splashy is a desktop wallpaper app powered by Unsplash. Rotate wallpapers automatically from collections, photographers, topics, colors, and search queries."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Work+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-left" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-right" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand">Splashy</div>
+      <a class="btn btn-small" href="https://github.com/Halfaxas/Splashy/releases/latest">Download</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="kicker">Wallpaper automation for people who care about aesthetics</p>
+        <h1>Turn your desktop into a rotating gallery.</h1>
+        <p class="hero-copy">
+          Splashy is a desktop app powered by the Unsplash API. Mix collections, photographers,
+          topics, colors, and custom searches, then let Splashy refresh your wallpaper on your
+          schedule.
+        </p>
+        <figure class="hero-shot">
+          <img src="assets/new_hero.gif" alt="Splashy app home view" />
+        </figure>
+      </section>
+
+      <section class="feature-grid" aria-label="Feature highlights">
+        <article>
+          <h2>Smart scheduling</h2>
+          <p>Rotate every 30 minutes, hourly, daily, or use a custom expression.</p>
+        </article>
+        <article>
+          <h2>Rich sources</h2>
+          <p>Pull from Unsplash collections, users, topics, color moods, or keyword queries.</p>
+        </article>
+        <article>
+          <h2>Tray-first workflow</h2>
+          <p>Runs quietly in the tray and can launch automatically on login.</p>
+        </article>
+      </section>
+
+      <section class="screens">
+        <h2>See it in action</h2>
+        <p class="screens-note">
+          All core app views showing collections, topics, photographers, colors, queries, related content, and settings.
+        </p>
+        <div class="screen-grid">
+          <figure>
+            <img src="assets/collections.png" alt="Collections view" />
+          </figure>
+          <figure>
+            <img src="assets/photographers.png" alt="Photographers view" />
+          </figure>
+          <figure>
+            <img src="assets/topics.png" alt="Topics view" />
+          </figure>
+          <figure>
+            <img src="assets/queries.png" alt="Queries view" />
+          </figure>
+          <figure>
+            <img src="assets/related.png" alt="Related view" />
+          </figure>
+          <figure>
+            <img src="assets/colors.png" alt="Colors view" />
+          </figure>
+        </div>
+      </section>
+
+      <section class="cta">
+        <h2>Ready to refresh your desktop experience?</h2>
+        <p>Download the latest release and set up your Unsplash key in under 2 minutes.</p>
+        <a class="btn" href="https://github.com/Halfaxas/Splashy/releases/latest">Download Latest Release</a>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Built with Tauri + React. Photos from Unsplash.<br />
+        <a href="https://github.com/Halfaxas/Splashy">GitHub Repository</a>
+      </p>
+    </footer>
+  </body>
+</html>
