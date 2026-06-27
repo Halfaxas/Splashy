@@ -79,6 +79,7 @@ xattr -cr /Applications/Splashy.app
 - [Tauri](https://tauri.app) - Rust + WebView desktop framework
 - [React](https://react.dev) + [TypeScript](https://www.typescriptlang.org)
 - [Unsplash API](https://unsplash.com/developers)
+- [liquid-glass-vue](https://github.com/WXperia/liquid-glass-vue) - Liquid glass UI effect
 
 ---
 
