@@ -170,6 +170,10 @@ pub struct WallpaperMeta {
     /// ("morning" | "day" | "afternoon" | "night"). None for random fallback.
     #[serde(default)]
     pub time_group: Option<String>,
+    /// Cached accent colour ("#rrggbb") extracted from the image at download
+    /// time, so the UI can show it instantly without re-decoding the file.
+    #[serde(default)]
+    pub dominant_color: Option<String>,
 }
 
 // ===== Command return types (serialized to frontend) =====

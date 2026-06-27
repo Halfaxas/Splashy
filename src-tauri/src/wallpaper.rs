@@ -79,7 +79,8 @@ pub async fn change_wallpaper() -> Result<String, String> {
         }
 
         download_wallpaper_to_path(&client, &photo, &settings.quality, &current_img).await?;
-        write_meta(&photo, getter.source_type, getter.source_value, time_group, &current_meta)?;
+        let dominant_color = images::dominant_color_hex(&current_img).ok();
+        write_meta(&photo, getter.source_type, getter.source_value, time_group, dominant_color, &current_meta)?;
 
         set_wallpaper(&current_img, Some(&prev_img))?;
         log::info!("[wallpaper] Wallpaper set — photo by @{}", photo.user.username);
@@ -112,7 +113,8 @@ pub async fn prefetch_next_wallpaper() -> Result<(), String> {
 
     let dest = current_dir.join("next_wallpaper.jpg");
     download_wallpaper_to_path(&client, &photo, &settings.quality, &dest).await?;
-    write_meta(&photo, getter.source_type, getter.source_value, time_group, &current_dir.join("next_wallpaper_meta.json"))?;
+    let dominant_color = images::dominant_color_hex(&dest).ok();
+    write_meta(&photo, getter.source_type, getter.source_value, time_group, dominant_color, &current_dir.join("next_wallpaper_meta.json"))?;
 
     Ok(())
 }
@@ -167,6 +169,7 @@ fn write_meta(
     source_type: String,
     source_value: Option<String>,
     time_group: Option<String>,
+    dominant_color: Option<String>,
     path: &Path,
 ) -> Result<(), String> {
     let meta = WallpaperMeta {
@@ -178,6 +181,7 @@ fn write_meta(
         unsplash_url:    format!("https://unsplash.com/photos/{}", photo.id),
         downloaded_iso:  Utc::now().to_rfc3339(),
         time_group,
+        dominant_color,
     };
     let bytes = serde_json::to_vec_pretty(&meta)
         .map_err(|e| format!("Failed to serialize meta: {}", e))?;
