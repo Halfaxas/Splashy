@@ -66,6 +66,44 @@ pub async fn get_adjacent_wallpapers() -> Result<AdjacentWallpapers, String> {
     })
 }
 
+/// Extract a representative accent colour ("#rrggbb") from the current
+/// wallpaper. Uses the colour cached in the meta JSON when available (written
+/// at download time) and only decodes the image as a fallback for older
+/// wallpapers. Returns `None` when no wallpaper is set yet.
+#[tauri::command]
+pub async fn get_wallpaper_dominant_color() -> Result<Option<String>, String> {
+    let current_dir = paths::current_dir()?;
+    let wallpaper_path = current_dir.join("current_wallpaper.jpg");
+    if !wallpaper_path.exists() {
+        return Ok(None);
+    }
+
+    // Fast path: return the colour cached in the meta JSON.
+    let meta_path = current_dir.join("current_wallpaper_meta.json");
+    if let Some(meta) = read_meta(&meta_path) {
+        if let Some(color) = meta.dominant_color {
+            return Ok(Some(color));
+        }
+    }
+
+    // Fallback: decode the image, then backfill the cached colour.
+    let path = wallpaper_path.clone();
+    let hex = tauri::async_runtime::spawn_blocking(move || {
+        crate::fs::images::dominant_color_hex(&path)
+    })
+    .await
+    .map_err(|e| format!("Failed to run colour task: {}", e))??;
+
+    if let Some(mut meta) = read_meta(&meta_path) {
+        meta.dominant_color = Some(hex.clone());
+        if let Ok(bytes) = serde_json::to_vec_pretty(&meta) {
+            let _ = crate::fs::files::write_atomic(&meta_path, &bytes);
+        }
+    }
+
+    Ok(Some(hex))
+}
+
 /// Read a named wallpaper (prefix = "previous" or "next") into `CurrentWallpaperInfo`.
 fn wallpaper_info_from(current_dir: &std::path::Path, prefix: &str) -> Option<CurrentWallpaperInfo> {
     let img_path  = current_dir.join(format!("{}_wallpaper.jpg", prefix));
