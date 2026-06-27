@@ -43,6 +43,19 @@ function formatHour(hour: number): string {
   return `${hour - 12} PM`;
 }
 
+// Parse "#rrggbb" into an [r, g, b] tuple. Falls back to a neutral grey.
+function hexToRgb(hex: string): [number, number, number] {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex.trim());
+  if (!m) return [136, 136, 136];
+  return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)];
+}
+
+// Lighten a colour toward white so it stays legible on the dark glass surface.
+function readableForeground([r, g, b]: [number, number, number]): string {
+  const lift = (c: number) => Math.round(c + (255 - c) * 0.45);
+  return `rgb(${lift(r)}, ${lift(g)}, ${lift(b)})`;
+}
+
 // ── SVG quadrant ring ─────────────────────────────────────────────────────────
 
 // Build an annular arc path for a segment of a donut ring.
@@ -112,9 +125,9 @@ function QuadrantRing({ timeGroups, targetId }: QuadrantRingProps) {
 
 // ── icons ─────────────────────────────────────────────────────────────────────
 
-function IconClock({ className }: { className?: string }) {
+function IconClock({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} style={style} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="8" cy="8" r="6.25" />
       <path d="M8 4.5v3.75l2.5 1.5" />
     </svg>
@@ -135,14 +148,17 @@ const GROUP_META: Record<string, { active: string; icon: string }> = {
 interface GroupsModalProps {
   target: UnifiedTarget;
   timeGroups: TimeGroup[];
+  accent: string;
   onClose: () => void;
   onToggleGroup: (groupId: string, isIn: boolean) => Promise<void>;
 }
 
-function GroupsModal({ target, timeGroups, onClose, onToggleGroup }: GroupsModalProps) {
+function GroupsModal({ target, timeGroups, accent, onClose, onToggleGroup }: GroupsModalProps) {
   const { t } = useTranslation();
   const [closing, setClosing] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const accentFg = readableForeground(hexToRgb(accent));
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
@@ -179,7 +195,7 @@ function GroupsModal({ target, timeGroups, onClose, onToggleGroup }: GroupsModal
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/8">
           <div className="flex items-center gap-2.5">
-            <IconClock className="w-4 h-4 text-white/50" />
+            <IconClock className="w-4 h-4" style={{ color: accentFg }} />
             <div>
               <h3 className="text-sm font-semibold text-white">{t("activeTargets.groupsTitle")}</h3>
               <p className="text-[11px] text-white/40 mt-0.5 leading-none truncate max-w-45">{target.label}</p>
@@ -187,9 +203,13 @@ function GroupsModal({ target, timeGroups, onClose, onToggleGroup }: GroupsModal
           </div>
           <button
             onClick={close}
-            className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer text-lg leading-none shrink-0"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-all cursor-pointer border border-white/8 shrink-0"
+            style={{ color: accentFg }}
           >
-            ×
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <line x1="1" y1="1" x2="9" y2="9" />
+              <line x1="9" y1="1" x2="1" y2="9" />
+            </svg>
           </button>
         </div>
 
@@ -252,16 +272,17 @@ export default function ActiveTargetsModal({ onClose }: Props) {
   const [closing, setClosing] = useState(false);
   const [groupTarget, setGroupTarget] = useState<UnifiedTarget | null>(null);
   const [disabledIds, setDisabledIds] = useState<Set<string>>(new Set());
+  const [accent, setAccent] = useState<string>("#888888");
   const pendingChangesRef = useRef<Map<string, { kind: string; id: string; enabled: boolean }>>(new Map());
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const KIND_META: Record<TargetKind, { label: string; color: string; Icon: React.FC<{ className?: string }> }> = {
-    collection: { label: t("activeTargets.kindCollection"), color: "text-violet-400 bg-violet-500/15",  Icon: IconCollections },
-    user:       { label: t("activeTargets.kindUser"),       color: "text-sky-400 bg-sky-500/15",         Icon: IconUsers },
-    topic:      { label: t("activeTargets.kindTopic"),      color: "text-emerald-400 bg-emerald-500/15", Icon: IconTopics },
-    query:      { label: t("activeTargets.kindQuery"),      color: "text-amber-400 bg-amber-500/15",     Icon: IconSearch },
-    color:      { label: t("activeTargets.kindColor"),      color: "text-pink-400 bg-pink-500/15",       Icon: IconPalette },
-    related:    { label: t("activeTargets.kindRelated"),    color: "text-cyan-400 bg-cyan-500/15",       Icon: IconRelated },
+  const KIND_META: Record<TargetKind, { label: string; Icon: React.FC<{ className?: string }> }> = {
+    collection: { label: t("activeTargets.kindCollection"), Icon: IconCollections },
+    user:       { label: t("activeTargets.kindUser"),       Icon: IconUsers },
+    topic:      { label: t("activeTargets.kindTopic"),      Icon: IconTopics },
+    query:      { label: t("activeTargets.kindQuery"),      Icon: IconSearch },
+    color:      { label: t("activeTargets.kindColor"),      Icon: IconPalette },
+    related:    { label: t("activeTargets.kindRelated"),    Icon: IconRelated },
   };
 
   const load = useCallback(async () => {
@@ -314,6 +335,21 @@ export default function ActiveTargetsModal({ onClose }: Props) {
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
+
+  useEffect(() => {
+    invoke<string | null>("get_wallpaper_dominant_color")
+      .then((hex) => { if (hex) setAccent(hex); })
+      .catch(() => {});
+  }, []);
+
+  const accentRgb = hexToRgb(accent);
+  const [ar, ag, ab] = accentRgb;
+  const accentFg = readableForeground(accentRgb);
+  const badgeStyle: React.CSSProperties = {
+    backgroundColor: `rgba(${ar}, ${ag}, ${ab}, 0.16)`,
+    borderColor: `rgba(${ar}, ${ag}, ${ab}, 0.28)`,
+    color: accentFg,
+  };
 
   const close = useCallback(() => {
     if (closing) return;
@@ -440,7 +476,8 @@ export default function ActiveTargetsModal({ onClose }: Props) {
                 )}
                 <button
                   onClick={close}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-all cursor-pointer border border-white/8"
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-all cursor-pointer border border-white/8"
+                  style={{ color: accentFg }}
                 >
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                     <line x1="1" y1="1" x2="9" y2="9" />
@@ -478,28 +515,36 @@ export default function ActiveTargetsModal({ onClose }: Props) {
                           : "bg-white/[0.03] hover:bg-white/[0.06] border-white/[0.06] hover:border-white/[0.1]"
                       }`}
                     >
-                      <div className={`flex items-center gap-1.5 shrink-0 px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wide ${meta.color}`}>
-                        <Icon className="w-3 h-3" />
-                        {meta.label}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-[13px] text-white/90 font-medium truncate block">{target.label}</span>
-                        {target.sublabel && (
-                          <span className="text-[11px] text-white/30 truncate block mt-0.5">{target.sublabel}</span>
-                        )}
+                      {/* Left column: badge on top, then name + subtext, all left-aligned */}
+                      <div className="flex-1 min-w-0 flex flex-col items-start gap-1.5">
+                        <div
+                          className="flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[9px] font-semibold uppercase tracking-wide"
+                          style={badgeStyle}
+                        >
+                          <Icon className="w-2.5 h-2.5" />
+                          {meta.label}
+                        </div>
+                        <div className="min-w-0 w-full">
+                          <span className="text-[13px] text-white/90 font-medium truncate block">{target.label}</span>
+                          {target.sublabel && (
+                            <span className="text-[11px] text-white/30 truncate block mt-0.5">{target.sublabel}</span>
+                          )}
+                        </div>
                       </div>
 
-                      {/* Clock button with quadrant ring */}
-                      <button
-                        onClick={() => setGroupTarget(target)}
-                        title={t("activeTargets.groupsTitle")}
-                        className="relative w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/8 transition-all cursor-pointer shrink-0"
-                      >
-                        <QuadrantRing timeGroups={timeGroups} targetId={target.targetId} />
-                        <IconClock className="relative z-10 w-3.5 h-3.5 text-white/35" />
-                      </button>
+                      {/* Right side: clock with quadrant ring + enable toggle */}
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => setGroupTarget(target)}
+                          title={t("activeTargets.groupsTitle")}
+                          className="relative w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/8 transition-all cursor-pointer shrink-0"
+                        >
+                          <QuadrantRing timeGroups={timeGroups} targetId={target.targetId} />
+                          <IconClock className="relative z-10 w-3.5 h-3.5 text-white/35" />
+                        </button>
 
-                      <Toggle enabled={!isDisabled} onChange={() => handleToggle(target)} />
+                        <Toggle enabled={!isDisabled} onChange={() => handleToggle(target)} />
+                      </div>
                     </div>
                   );
                 })}
@@ -516,6 +561,7 @@ export default function ActiveTargetsModal({ onClose }: Props) {
         <GroupsModal
           target={groupTarget}
           timeGroups={timeGroups}
+          accent={accent}
           onClose={() => setGroupTarget(null)}
           onToggleGroup={handleGroupToggle}
         />
