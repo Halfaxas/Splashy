@@ -147,6 +147,15 @@ export default function App() {
     };
   }, []);
 
+useEffect(() => {
+    const unlisten = listen("trigger-ui-refresh", () => {
+      handleRefresh();
+    });
+    return () => {
+      unlisten.then((f) => f());
+    };
+  }, []);
+
   if (hasApiKey === null) {
     return <div className="h-screen" style={{ background: "#07080e" }} />;
   }
