@@ -34,6 +34,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -41,5 +42,13 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENGN0NBODA2ODY5NTZCQjUKUldTMWE1V0dCcWg4ejR0NzV6NU1nTHl3NEFwRXlMNUhUL2hmc1F6WUllUnp6dHdLV3UyS0loS2oK",
+      "endpoints": [
+        "https://github.com/Halfaxas/Splashy/releases/latest/download/latest.json"
+      ]
+    }
   }
 }

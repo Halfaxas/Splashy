@@ -14,6 +14,7 @@ import ColorsView from "./views/ColorsView";
 import RelatedView from "./views/RelatedView";
 import SettingsView from "./views/SettingsView";
 import TitleBar from "./components/TitleBar";
+import UpdatePrompt from "./components/UpdatePrompt";
 
 function computeBrightness(url: string): Promise<number> {
   return new Promise((resolve) => {
@@ -257,6 +258,8 @@ useEffect(() => {
           {view === "settings" && <SettingsView onApiKeyChange={() => {}} />}
         </div>
       </div>
+
+      <UpdatePrompt />
     </div>
   );
 }

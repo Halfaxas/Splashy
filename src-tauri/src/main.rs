@@ -28,6 +28,8 @@ fn main() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             Some(vec!["--hidden"]),
         ))
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .on_menu_event(|app, event| {
             match event.id.as_ref() {
                 "open_settings" => {
