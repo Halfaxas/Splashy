@@ -132,13 +132,7 @@ fn main() {
                 .show_menu_on_left_click(true)
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "refresh" => {
-                        let handle = app.clone();
-                        tauri::async_runtime::spawn(async move {
-                            match crate::wallpaper::change_wallpaper().await {
-                                Ok(_) => { let _ = handle.emit("wallpaper-changed", ()); }
-                                Err(e) => log::error!("[tray] Refresh failed: {}", e),
-                            }
-                        });
+                        let _ = app.emit("trigger-ui-refresh", ());
                     }
                     "open" => {
                         if let Some(w) = app.get_webview_window("main") {
