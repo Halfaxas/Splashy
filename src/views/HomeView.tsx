@@ -57,7 +57,7 @@ function AdjacentCard({
         <GlassPanel cornerRadius={12} className="w-full h-full" />
       </div>
       <div className="relative w-full h-14 overflow-hidden">
-        <div className="absolute inset-0 bg-white/5 animate-pulse" />
+        {!info && <div className="absolute inset-0 bg-white/5 animate-pulse" />}
         {info && (
           <img
             key={`${info.photo_id}-${cacheKey}`}
