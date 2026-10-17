@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { getVersion } from "@tauri-apps/api/app";
 import { enable, disable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { useTranslation } from "react-i18next";
@@ -65,6 +66,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
   const [apiKeyVerifying, setApiKeyVerifying] = useState(false);
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   const [apiKeySaved, setApiKeySaved] = useState(false);
+  const [version, setVersion] = useState("");
 
   const BASIC_OPTIONS = [
     { cron: "@startup",     label: t("settings.scheduleOnStartup"),  desc: t("settings.scheduleOnStartupDesc") },
@@ -104,6 +106,7 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
       })
       .catch((e) => setError(String(e)))
       .finally(() => setLoading(false));
+    getVersion().then(setVersion).catch(() => {});
   }, []);
 
   const handleSaveApiKey = async () => {
@@ -428,6 +431,11 @@ export default function SettingsView({ onApiKeyChange }: { onApiKeyChange: () =>
             <span className="text-sm font-medium">Buy me a coffee</span>
           </button>
         </section>
+
+        {/* ── About ─────────────────────────────────────────────────────── */}
+        {version && (
+          <p className="text-center text-[11px] text-white/25 -mt-4">Splashy v{version}</p>
+        )}
 
       </div>
       </div>

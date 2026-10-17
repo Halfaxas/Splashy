@@ -212,5 +212,15 @@
     "summaryOn": "În {{days}}",
     "summaryEveryDayAt": "În fiecare zi la {{time}}",
     "summaryOnDaysAt": "În {{days}}, la {{time}}"
+  },
+  "updater": {
+    "title": "Actualizare disponibilă",
+    "subtitle": "Splashy {{version}} este pregătit de instalare",
+    "later": "Mai târziu",
+    "install": "Instalează și repornește",
+    "downloading": "Se descarcă…",
+    "installing": "Se instalează…",
+    "readyToRestart": "Instalat — se repornește…",
+    "error": "Actualizarea nu a putut fi instalată. Încearcă din nou mai târziu."
   }
 }

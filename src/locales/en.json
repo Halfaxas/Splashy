@@ -212,5 +212,15 @@
     "summaryOn": "On {{days}}",
     "summaryEveryDayAt": "Every day at {{time}}",
     "summaryOnDaysAt": "On {{days}}, at {{time}}"
+  },
+  "updater": {
+    "title": "Update Available",
+    "subtitle": "Splashy {{version}} is ready to install",
+    "later": "Later",
+    "install": "Install & Restart",
+    "downloading": "Downloading…",
+    "installing": "Installing…",
+    "readyToRestart": "Installed — restarting…",
+    "error": "Couldn't install the update. Try again later."
   }
 }

@@ -95,6 +95,16 @@ export function IconRelated({ className }: IconProps) {
   );
 }
 
+export function IconDownload({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75}>
+      <path d="M12 3v12" />
+      <path d="M7 10l5 5 5-5" />
+      <path d="M4 20h16" />
+    </svg>
+  );
+}
+
 export function IconRefresh({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75}>
